@@ -31,7 +31,7 @@ public interface IBatchable extends IMultiPart {
                         this::isBatchEnable, (clickData, pressed) -> this.setBatchEnable(pressed)))
                         .setTooltipsSupplier((pressed) -> List.of(
                                 Component.translatable("gtmadvancedhatch.gui.batch").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))
-                                        .append(Component.translatable(pressed ? "gtmadvancedhatch.gui.batch.yes" : "gtmadvancedhatch.gui.batch.no")),
+                                        .append(Component.translatable(pressed ? "gtmadvancedhatch.gui.universe.yes" : "gtmadvancedhatch.gui.universe.no")),
                                 Component.translatable("gtmadvancedhatch.gui.batch.info"))));
     }
 }

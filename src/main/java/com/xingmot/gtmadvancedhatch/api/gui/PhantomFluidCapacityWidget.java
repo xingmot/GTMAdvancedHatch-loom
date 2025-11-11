@@ -5,13 +5,13 @@ import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
 import com.xingmot.gtmadvancedhatch.util.AHFormattingUtil;
 import com.xingmot.gtmadvancedhatch.util.AHUtil;
 
-import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.widget.ScrollablePhantomFluidWidget;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
 import com.lowdragmc.lowdraglib.Platform;
 import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
 import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
+import com.lowdragmc.lowdraglib.gui.texture.ResourceTexture;
 import com.lowdragmc.lowdraglib.gui.util.DrawerHelper;
 import com.lowdragmc.lowdraglib.side.fluid.FluidHelper;
 import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
@@ -54,7 +54,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
     private final Consumer<FluidStack> phantomFluidSetter;
     FluidStack currentJEIRenderedIngredient;
     @Setter
-    private IGuiTexture lockTexture = new GuiTextureGroup(GuiTextures.BUTTON_LOCK.scale(0.65F));
+    private static IGuiTexture lockTexture = new GuiTextureGroup(new ResourceTexture("gtceu:textures/gui/widget/button_lock.png").scale(0.65F));
     @Setter
     protected Long maxCapacity;
     /** 锁定滚动，每次打开gui时会自动锁定全部槽位 */

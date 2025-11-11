@@ -2,13 +2,12 @@ package com.xingmot.gtmadvancedhatch.mixin.gtm;
 
 import com.gregtechceu.gtceu.utils.OverlayedFluidHandler;
 
+import com.lowdragmc.lowdraglib.misc.FluidStorage;
 import com.lowdragmc.lowdraglib.misc.FluidTransferList;
 import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
 import com.lowdragmc.lowdraglib.side.fluid.IFluidStorage;
 
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
+import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,27 +17,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(OverlayedFluidHandler.class)
-public class OverlayeddFluidHandlerMixin {
+public class OverlayedFluidHandlerMixin {
 
-    @Redirect(remap = false, method = "<init>", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
-    public boolean initMixin(List<Object> instance, Object e, @NotNull FluidTransferList tank) {
-        return instance.add(e);
+    @Redirect(remap = false,
+              method = "<init>",
+              at = @At(value = "INVOKE", target = "Lcom/lowdragmc/lowdraglib/misc/FluidStorage;setFluid(Lcom/lowdragmc/lowdraglib/side/fluid/FluidStack;)V"))
+    public void setFluidMixin(FluidStorage storage, FluidStack fluid, FluidTransferList tank, @Local int i) {
+        storage.setValidator(fluidStack -> tank.isFluidValid(i, fluidStack));
+        storage.setFluid(fluid);
     }
-
-    // public OverlayedFluidHandler(@NotNull FluidTransferList tank) {
-    // IntStream var10000 = IntStream.range(0, tank.getTanks());
-    // Objects.requireNonNull(tank);
-    // FluidStack[] entries = (FluidStack[])var10000.mapToObj(tank::getFluidInTank).toArray((x$0) -> new
-    // FluidStack[x$0]);
-    //
-    // for(int i = 0; i < tank.getTanks(); ++i) {
-    // FluidStorage storage = new FluidStorage(tank.getTankCapacity(i));
-    // storage.setFluid(entries[i]);
-    // int finalI = i;
-    // storage.setValidator(fluidStack -> tank.isFluidValid(finalI,fluidStack));
-    // this.overlayedTanks.add(new OverlayedFluidHandler.OverlayedTank(storage, tank.isFluidValid(i, entries[i])));
-    // }
-    // }
 
     @Mixin(targets = "com.gregtechceu.gtceu.utils.OverlayedFluidHandler$OverlayedTank")
     private static class OverlayedTankMixin {

@@ -1,20 +1,3 @@
-// ModTemplatez: An Architectury Loom based template workspace for Minecraft Forge mod development.
-//
-// ideally you don't need to touch this gradle script, instead:
-//
-// see ./gradle/scripts/dependencies.gradle for dependency management
-//
-// see ./gradle/scripts/publishing.gradle for publishing
-//
-// see ./gradle/scripts/extra.gradle for adding custom action after publishing
-//
-// see ./gradle.properties for almost everything about mod metadata, mod compiling, Minecraft sources, etc.
-//
-//
-//
-//
-//
-
 import org.jetbrains.changelog.Changelog;
 
 plugins {
@@ -27,6 +10,13 @@ plugins {
     id('com.modrinth.minotaur').version('2.+').apply(false)            //only used for Modrinth publishing
     id('org.jetbrains.changelog').version('2.2.0')
     id('xyz.wagyourtail.jvmdowngrader').version("${jvmdowngrader_version}").apply(false)
+}
+
+idea {
+    module {
+        downloadSources = false
+        downloadJavadoc = false
+    }
 }
 
 apply from: 'gradle/scripts/helpers.gradle'
@@ -96,6 +86,26 @@ loom {
 
         if (propertyBool('use_access_widener')) {
             convertAccessWideners = true
+        }
+    }
+
+    runs {
+        client {
+            client()
+            name "Client"
+            runDir "run/client"
+            vmArgs "-XX:+AllowEnhancedClassRedefinition"
+            vmArgs "-Darchitectury.development=true"
+            vmArgs "-Dneoforge.enabledGameTestNamespace=${propertyString('mod_id')}"
+            programArgs "--username", "Player1"
+        }
+        server {
+            server()
+            name "Server"
+            runDir "run/server"
+            vmArgs "-XX:+AllowEnhancedClassRedefinition"
+            vmArgs "-Darchitectury.development=true"
+            vmArgs "-Dneoforge.enabledGameTestNamespace=${propertyString('mod_id')}"
         }
     }
 }
@@ -169,7 +179,9 @@ processResources {
             "mod_description": propertyString('mod_description'),
             "minecraft_version": propertyString('minecraft_version'),
             "required_minecraft_range": propertyString('required_minecraft_range'),
-            "resource_pack_format": propertyString('resource_pack_format')
+            "resource_pack_format": propertyString('resource_pack_format'),
+            "gtceu_version": propertyString('gtceu_version'),
+            "gtmthings_version": propertyString('gtmthings_version')
         )
     }
 }

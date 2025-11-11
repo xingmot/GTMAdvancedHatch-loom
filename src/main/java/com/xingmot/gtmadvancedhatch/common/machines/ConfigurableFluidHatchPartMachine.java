@@ -169,14 +169,16 @@ public class ConfigurableFluidHatchPartMachine extends TieredIOPartMachine imple
             }
             return InteractionResult.SUCCESS;
         } else if (player.isCreative() && this.tank instanceof ConfigNotifiableFluidTank cfTank) {
-            if (LDLib.isClient())
+            if (LDLib.isClient()) {
                 if (ToolHelper.isTool(is, GTToolType.SCREWDRIVER)) {
                     this.tank.setAllowSameFluids(!cfTank.getAllowSameFluids());
+                    Component enable = cfTank.getAllowSameFluids() ? Component.translatable("gtmadvancedhatch.gui.universe.yes") : Component.translatable("gtmadvancedhatch.gui.universe.no");
+                    player.sendSystemMessage(Component.translatable("gtmadvancedhatch.machine.configurable_fluid_hatch.screwdriver.tooltip").append(enable));
+                    return InteractionResult.SUCCESS;
                 }
-            return InteractionResult.SUCCESS;
-        } else {
-            return InteractionResult.PASS;
+            }
         }
+        return InteractionResult.PASS;
     }
 
     @Override
