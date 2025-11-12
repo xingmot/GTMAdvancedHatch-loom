@@ -206,17 +206,24 @@ public class AHMachines {
                             .renderer(() -> new OverlayTieredMachineRenderer(tier, GTCEu.id(renderPath)))
                             .abilities(abilities)
                             .compassNode("fluid_hatch")
-                            .tooltips(
-                                    Component.translatable("gtceu.machine.fluid_hatch." + (io == IO.IN ? "import" : "export") + ".tooltip"),
-                                    Component.translatable(GTMAdvancedHatch.MODID + ".machine." + name + ".tooltip"));
-
-                    if (slots == 1) {
-                        builder.tooltips(Component.translatable("gtmadvancedhatch.machine.fluid_storage_capacity.tooltip",
-                                AHFormattingUtil.formatLongBucketsToShort(ConfigurableFluidHatchPartMachine.getTankCapacity(initialCapacity, tier), 1024000)));
-                    } else {
-                        builder.tooltips(Component.translatable("gtmadvancedhatch.machine.fluid_storage_capacity_mult.tooltip",
-                                slots, AHFormattingUtil.formatLongBucketsToShort(ConfigurableFluidHatchPartMachine.getTankCapacity(initialCapacity, tier), 1024000)));
-                    }
+                            .tooltipBuilder(
+                            (itemStack, components) -> {
+                                if (tier == MAX && slots == 16) {
+                                    components.add(AHFormattingUtil.getRainbowScrollComponent(Component.translatable("gtmadvancedhatch.machine.greatjob.tooltip2")
+                                                    .getString(), AHFormattingUtil.RainbowSpeed.FAST2, false)
+                                            .withStyle(ChatFormatting.BOLD));
+                                }
+                                components.addAll(List.of(
+                                        Component.translatable("gtceu.machine.fluid_hatch." + (io == IO.IN ? "import" : "export") + ".tooltip"),
+                                        Component.translatable("gtmadvancedhatch.machine.configurable_fluid_hatch.tooltip.0"),
+                                        Component.translatable("gtmadvancedhatch.machine.configurable_fluid_hatch.tooltip.1")
+                                ));
+                                if(slots == 1)
+                                    components.add(Component.translatable("gtmadvancedhatch.machine.fluid_storage_capacity.tooltip",
+                                            AHFormattingUtil.formatLongBucketsToShort(ConfigurableFluidHatchPartMachine.getTankCapacity(initialCapacity, tier), 1024000)));
+                                else components.add(Component.translatable("gtmadvancedhatch.machine.fluid_storage_capacity_mult.tooltip",
+                                        slots, AHFormattingUtil.formatLongBucketsToShort(ConfigurableFluidHatchPartMachine.getTankCapacity(initialCapacity, tier), 1024000)));
+                            });
 
                     return builder.register();
                 },

@@ -1,5 +1,6 @@
 {
   "name": "自适配能源网络",
   "description": "这里会讲解自适配能源网络的用途和使用方法。",
-  "icon": "gtmadvancedhatch:adaptive_net_energy_terminal"
+  "icon": "gtmadvancedhatch:adaptive_net_energy_terminal",
+  "sortnum": 1
 }

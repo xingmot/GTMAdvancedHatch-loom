@@ -1,0 +1,42 @@
+{
+  "sortnum":1,
+  "name": "可配置流体仓",
+  "icon": "gtmadvancedhatch:ev_configurable_fluid_hatch_output",
+  "category": "gtmadvancedhatch:hatch",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)可配置流体仓$()是高度可控的流体仓，它$(_)集成了槽位过滤，容量配置于一体$()。$(br)$(li)1.自HV等级，每格容量都远大于普通流体仓的容量。$(li)2.每一格都可以通过虚拟流体槽设置$(item)过滤$()和$(item)容量$()大小。$(li)3.槽位流体量会显示$(thing)百分比$()。$(li)4.$(item)螺丝刀$()右击可以调整流体占用模式：$(thing)流体仅占用一格$()默认为禁用，启用后同种流体最多$(_)只占用一个槽位$()。"
+    },
+    {
+      "type": "spotlight",
+      "item": "gtmadvancedhatch:ulv_configurable_fluid_hatch_output,gtmadvancedhatch:lv_configurable_fluid_hatch_output,gtmadvancedhatch:mv_configurable_fluid_hatch_output,gtmadvancedhatch:hv_configurable_fluid_hatch_output,gtmadvancedhatch:ev_configurable_fluid_hatch_output,gtmadvancedhatch:iv_configurable_fluid_hatch_output,gtmadvancedhatch:luv_configurable_fluid_hatch_output,gtmadvancedhatch:zpm_configurable_fluid_hatch_output,gtmadvancedhatch:uv_configurable_fluid_hatch_output,gtmadvancedhatch:uhv_configurable_fluid_hatch_output,gtmadvancedhatch:uev_configurable_fluid_hatch_output,gtmadvancedhatch:uiv_configurable_fluid_hatch_output,gtmadvancedhatch:uxv_configurable_fluid_hatch_output,gtmadvancedhatch:opv_configurable_fluid_hatch_output,gtmadvancedhatch:max_configurable_fluid_hatch_output",
+      "title": "可配置仓的容量",
+      "text": "MV及以下级别的制作材料因其容量不大，要容易得多，无需使用超级缸制作。一般情况需要$(item)超级缸/量子缸$()，$(item)流体校准器$()、$(item)发射器$()、$(item)传感器$()制作。八重和十六重则还要更贵。$(_)$(bold)输入仓摆下来时会自动设为最大容量，输出仓则会自动设为0容量。$()容量上限不同等级具体数值罗列见第四页。"
+    },
+    {
+      "type": "4x4item_display",
+      "title": "一些多重可配置仓",
+      "item11": "gtmadvancedhatch:ev_configurable_fluid_hatch_input_8x,gtmadvancedhatch:ev_configurable_fluid_hatch_output_8x",
+      "item12": "gtmadvancedhatch:ev_configurable_fluid_hatch_input_16x,gtmadvancedhatch:ev_configurable_fluid_hatch_output_16x",
+      "item13": "gtmadvancedhatch:iv_configurable_fluid_hatch_input_8x,gtmadvancedhatch:iv_configurable_fluid_hatch_output_8x",
+      "item14": "gtmadvancedhatch:iv_configurable_fluid_hatch_input_16x,gtmadvancedhatch:iv_configurable_fluid_hatch_output_16x",
+      "item21": "gtmadvancedhatch:luv_configurable_fluid_hatch_input_8x,gtmadvancedhatch:luv_configurable_fluid_hatch_output_8x",
+      "item22": "gtmadvancedhatch:luv_configurable_fluid_hatch_input_16x,gtmadvancedhatch:luv_configurable_fluid_hatch_output_16x",
+      "item23": "gtmadvancedhatch:zpm_configurable_fluid_hatch_input_8x,gtmadvancedhatch:zpm_configurable_fluid_hatch_output_8x",
+      "item24": "gtmadvancedhatch:zpm_configurable_fluid_hatch_input_16x,gtmadvancedhatch:zpm_configurable_fluid_hatch_output_16x",
+      "item31": "gtmadvancedhatch:luv_configurable_fluid_hatch_input_8x,gtmadvancedhatch:luv_configurable_fluid_hatch_output_8x",
+      "item32": "gtmadvancedhatch:luv_configurable_fluid_hatch_input_16x,gtmadvancedhatch:luv_configurable_fluid_hatch_output_16x",
+      "item33": "gtmadvancedhatch:uv_configurable_fluid_hatch_input_8x,gtmadvancedhatch:uv_configurable_fluid_hatch_output_8x",
+      "item34": "gtmadvancedhatch:uv_configurable_fluid_hatch_input_16x,gtmadvancedhatch:uv_configurable_fluid_hatch_output_16x",
+      "item41": "gtmadvancedhatch:opv_configurable_fluid_hatch_input_8x,gtmadvancedhatch:opv_configurable_fluid_hatch_output_8x",
+      "item42": "gtmadvancedhatch:opv_configurable_fluid_hatch_input_16x,gtmadvancedhatch:opv_configurable_fluid_hatch_output_16x",
+      "item43": "gtmadvancedhatch:max_configurable_fluid_hatch_input_8x,gtmadvancedhatch:max_configurable_fluid_hatch_output_8x",
+      "item44": "gtmadvancedhatch:max_configurable_fluid_hatch_input_16x,gtmadvancedhatch:max_configurable_fluid_hatch_output_16x"
+    },
+    {
+      "type": "text",
+      "text": "$(li)$(ulv) 8桶$(li)$(lv) 16桶$(li)$(mv) 32桶$(li)$(hv) 2048桶$(li)$(ev) 32768桶$(li)$(iv) 524288桶$(li)$(luv) 8388608桶$(li)$(zpm) 134217728桶$(li)$(uv) 21亿桶$(li)......$(li)$(max) 9.22E15桶"
+    }
+  ]
+}

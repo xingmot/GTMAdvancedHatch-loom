@@ -1,5 +1,7 @@
 package com.xingmot.gtmadvancedhatch.common.machines;
 
+import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
+import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import com.xingmot.gtmadvancedhatch.api.ConfigNotifiableFluidTank;
 import com.xingmot.gtmadvancedhatch.api.IConfigFluidTransfer;
 import com.xingmot.gtmadvancedhatch.api.IMultiCapacity;
@@ -41,6 +43,7 @@ import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -60,27 +63,18 @@ import org.jetbrains.annotations.Nullable;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class ConfigurableFluidHatchPartMachine extends TieredIOPartMachine implements IMachineLife, IInteractedMachine, IMultiCapacity {
+public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine implements IMachineLife, IInteractedMachine, IMultiCapacity, IMultiPart {
+    // 想兼容gtlcore就必须继承FluidHatchPartMachine，否则会不识别配方
 
-    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(ConfigurableFluidHatchPartMachine.class, TieredIOPartMachine.MANAGED_FIELD_HOLDER);
-    @Persisted
-    public final NotifiableFluidTank tank;
+    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(ConfigurableFluidHatchPartMachine.class, FluidHatchPartMachine.MANAGED_FIELD_HOLDER);
     @Persisted
     public long maxCapacity;
-    @Getter
-    @Persisted
-    protected final NotifiableItemStackHandler circuitInventory;
     private final int slots;
-    protected @Nullable TickableSubscription autoIOSubs;
     protected @Nullable ISubscription tankSubs;
 
     public ConfigurableFluidHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, long initialCapacity, int slots, Object... args) {
-        super(holder, tier, io);
+        super(holder, tier, io, initialCapacity, slots, args);
         this.slots = slots;
-        this.maxCapacity = getTankCapacity(initialCapacity, tier);
-        this.tank = this.createTank(slots, args);
-        this.tank.setAllowSameFluids(true);
-        this.circuitInventory = this.createCircuitItemHandler(io);
     }
 
     public static long getTankCapacity(long initialCapacity, int tier) {
@@ -89,8 +83,9 @@ public class ConfigurableFluidHatchPartMachine extends TieredIOPartMachine imple
     }
 
     public void initTank() {
-        if (this.tank instanceof ConfigNotifiableFluidTank cfTank)
+        if (this.tank instanceof ConfigNotifiableFluidTank cfTank) {
             cfTank.initTank();
+        }
     }
 
     @Override
@@ -98,50 +93,33 @@ public class ConfigurableFluidHatchPartMachine extends TieredIOPartMachine imple
         return MANAGED_FIELD_HOLDER;
     }
 
-    protected NotifiableFluidTank createTank(int slots, Object... args) {
-        return new ConfigNotifiableFluidTank(this, slots, this.maxCapacity, this.io);
-    }
-
-    protected NotifiableItemStackHandler createCircuitItemHandler(Object... args) {
-        if (args.length > 0) {
-            Object var3 = args[0];
-            if (var3 instanceof IO io) {
-                if (io == IO.IN) {
-                    return (new NotifiableItemStackHandler(this, 1, IO.IN, IO.NONE)).setFilter(IntCircuitBehaviour::isIntegratedCircuit);
-                }
-            }
-        }
-
-        return new NotifiableItemStackHandler(this, 0, IO.NONE);
+    @Override
+    protected NotifiableFluidTank createTank(long initialCapacity, int slots, Object... args) {
+        if(this.maxCapacity == 0L)
+            this.maxCapacity = getTankCapacity(initialCapacity, tier);
+        ConfigNotifiableFluidTank fluidTank = new ConfigNotifiableFluidTank(this, slots, this.maxCapacity, this.io);
+        fluidTank.setAllowSameFluids(true);
+        return fluidTank;
     }
 
     @Override
-    public void onMachineRemoved() {
-        if (!ConfigHolder.INSTANCE.machines.ghostCircuit) {
-            this.clearInventory(this.circuitInventory.storage);
+    public void onMachinePlaced(@Nullable LivingEntity player, ItemStack stack) {
+        if(tank instanceof ConfigNotifiableFluidTank cTank) {
+            if (io == IO.IN) cTank.newTankCapacity(this.maxCapacity);
+            else cTank.newTankCapacity(0L);
         }
     }
 
     @Override
     public void onLoad() {
-        super.onLoad();
         Level var2 = this.getLevel();
         if (var2 instanceof ServerLevel serverLevel) {
-            this.initTank();
+            this.initTank(); // 持久化恢复流体储存的容量数据
             serverLevel.getServer()
                     .tell(new TickTask(0, this::updateTankSubscription));
         }
 
         this.tankSubs = this.tank.addChangedListener(this::updateTankSubscription);
-    }
-
-    @Override
-    public void onUnload() {
-        super.onUnload();
-        if (this.tankSubs != null) {
-            this.tankSubs.unsubscribe();
-            this.tankSubs = null;
-        }
     }
 
     @Override
@@ -168,11 +146,11 @@ public class ConfigurableFluidHatchPartMachine extends TieredIOPartMachine imple
                 player.sendSystemMessage(c);
             }
             return InteractionResult.SUCCESS;
-        } else if (player.isCreative() && this.tank instanceof ConfigNotifiableFluidTank cfTank) {
+        } else if (this.tank instanceof ConfigNotifiableFluidTank cfTank) {
             if (LDLib.isClient()) {
                 if (ToolHelper.isTool(is, GTToolType.SCREWDRIVER)) {
                     this.tank.setAllowSameFluids(!cfTank.getAllowSameFluids());
-                    Component enable = cfTank.getAllowSameFluids() ? Component.translatable("gtmadvancedhatch.gui.universe.yes") : Component.translatable("gtmadvancedhatch.gui.universe.no");
+                    Component enable = cfTank.getAllowSameFluids() ? Component.translatable("gtmadvancedhatch.gui.universe.no") : Component.translatable("gtmadvancedhatch.gui.universe.yes");
                     player.sendSystemMessage(Component.translatable("gtmadvancedhatch.machine.configurable_fluid_hatch.screwdriver.tooltip").append(enable));
                     return InteractionResult.SUCCESS;
                 }
@@ -188,56 +166,11 @@ public class ConfigurableFluidHatchPartMachine extends TieredIOPartMachine imple
     }
 
     @Override
-    public void onRotated(Direction oldFacing, Direction newFacing) {
-        super.onRotated(oldFacing, newFacing);
-        this.updateTankSubscription();
-    }
-
-    protected void updateTankSubscription() {
-        if (this.isWorkingEnabled() && (this.io == IO.OUT && !this.tank.isEmpty() || this.io == IO.IN) &&
-                FluidTransferHelper.getFluidTransfer(this.getLevel(), this.getPos().relative(this.getFrontFacing()),
-                        this.getFrontFacing().getOpposite()) != null) {
-            this.autoIOSubs = this.subscribeServerTick(this.autoIOSubs, this::autoIO);
-        } else if (this.autoIOSubs != null) {
-            this.autoIOSubs.unsubscribe();
-            this.autoIOSubs = null;
-        }
-    }
-
-    protected void autoIO() {
-        if (this.getOffsetTimer() % 5L == 0L) {
-            if (this.isWorkingEnabled()) {
-                if (this.io == IO.OUT) {
-                    this.tank.exportToNearby(this.getFrontFacing());
-                } else if (this.io == IO.IN) {
-                    this.tank.importFromNearby(this.getFrontFacing());
-                }
-            }
-
-            this.updateTankSubscription();
-        }
-    }
-
-    @Override
     public long[] getTankCapacity() {
         if (this.tank instanceof IConfigFluidTransfer ctank) {
             return ctank.getTankCapacity();
         }
         return null;
-    }
-
-    @Override
-    public void setWorkingEnabled(boolean workingEnabled) {
-        super.setWorkingEnabled(workingEnabled);
-        this.updateTankSubscription();
-    }
-
-    @Override
-    public void attachConfigurators(ConfiguratorPanel configuratorPanel) {
-        super.attachConfigurators(configuratorPanel);
-        if (this.io == IO.IN) {
-            configuratorPanel.attachConfigurators(new CircuitFancyConfigurator(this.circuitInventory.storage));
-        }
     }
 
     @Override

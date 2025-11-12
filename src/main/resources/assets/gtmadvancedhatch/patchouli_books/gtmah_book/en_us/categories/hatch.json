@@ -1,5 +1,6 @@
 {
   "name": "仓室",
   "description": "这里记录了本模组添加的所有特殊仓室。",
-  "icon": "gtmadvancedhatch:max_64a_net_energy_input_hatch"
+  "icon": "gtmadvancedhatch:max_64a_net_energy_input_hatch",
+  "sortnum": 0
 }

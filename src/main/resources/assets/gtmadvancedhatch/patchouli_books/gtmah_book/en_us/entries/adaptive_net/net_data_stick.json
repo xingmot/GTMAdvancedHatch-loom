@@ -1,4 +1,5 @@
 {
+  "sortnum":102,
   "name": "网络配置闪存",
   "icon": "gtmadvancedhatch:net_data_stick",
   "category": "gtmadvancedhatch:adaptive_net",

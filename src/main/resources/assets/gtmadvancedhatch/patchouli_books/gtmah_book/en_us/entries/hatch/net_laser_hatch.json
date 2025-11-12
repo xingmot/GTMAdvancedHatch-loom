@@ -1,11 +1,12 @@
 {
+  "sortnum":3,
   "name": "电网激光仓",
   "icon": "gtmadvancedhatch:max_256a_net_laser_target_hatch",
   "category": "gtmadvancedhatch:hatch",
   "pages": [
     {
       "type": "text",
-      "text": "电网激光仓是无线激光仓的升级版，与$(l:hatch/net_energy_hatch)电网仓$()基本相同，$(thing)只是功率和容量更大，并且只可用于支持激光仓室的机器$()。此外也有超大安培的版本，不过一些配方需要整合包支持或魔改添加。"
+      "text": "$(item)电网激光仓$()是无线激光仓的升级版，与$(l:hatch/net_energy_hatch)电网仓$()基本相同，$(thing)只是功率和容量更大，并且只可用于支持激光仓室的机器$()。此外也有超大安培的版本，不过一些配方需要整合包支持或魔改添加。"
     },
     {
       "type": "spotlight",

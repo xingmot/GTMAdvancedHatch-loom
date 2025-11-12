@@ -50,7 +50,7 @@ public class BatchableProvider extends CapabilityBlockProvider<Boolean> {
         var metaMachine = metaMachineBlockEntity.getMetaMachine();
         if (metaMachine instanceof IBatchable) {
             tooltip.add(Component.translatable("gtmadvancedhatch.gui.batch")
-                    .append(Component.translatable(capData.getBoolean("batch_enable") ? "gtmadvancedhatch.gui.batch.yes" : "gtmadvancedhatch.gui.batch.no")
+                    .append(Component.translatable(capData.getBoolean("batch_enable") ? "gtmadvancedhatch.gui.universe.yes" : "gtmadvancedhatch.gui.universe.no")
                             .setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA))));
         }
     }

@@ -1,4 +1,5 @@
 {
+  "sortnum":101,
   "name": "自适配电网仓",
   "icon": "gtmadvancedhatch:adaptive_net_energy_terminal",
   "category": "gtmadvancedhatch:adaptive_net",

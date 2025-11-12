@@ -331,6 +331,8 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
             } else {
                 tooltips.add(Component.translatable("ldlib.fluid.amount", 0, this.lastTankCapacity)
                         .append(" " + FluidHelper.getUnit()));
+                if (this.lastTankCapacity != 0)
+                    tooltips.add(Component.translatable("gtmadvancedhatch.gui.phantom_capacity_tank_widget.tooltips").withStyle(ChatFormatting.GOLD));
             }
             if (!Platform.isForge()) {
                 tooltips.add(Component.literal("§6mB:§r %d/%d".formatted(0, this.lastTankCapacity * 1000L / FluidHelper.getBucket()))

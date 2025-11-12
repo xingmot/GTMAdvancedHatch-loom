@@ -1,0 +1,17 @@
+{
+  "sortnum":-1,
+  "name": "0.1.8 功能性更新",
+  "icon": "gtmadvancedhatch:max_256a_net_laser_target_hatch",
+  "category": "gtmadvancedhatch:update",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)$(_)功能性更新：$()$(br)$(li)$(l:hatch/net_energy_hatch)电网仓$()可开启批处理(实验性)$(li)新增：$(l:hatch/configurable_fluid_hatch)可配置流体仓$()$(p)电网监视器调整:$(li)新增$(item)清空电网$()电量按钮。$(li)调整电量变化显示顺序。$(li)总量显示单位范围扩大。"
+    },
+    {
+      "type": "text",
+      "title": "bug修复",
+      "text": "$(thing)$(_)服务器：$()$(br)$(li)修复无法添加模组的bug$(li)修复电网监视器$(item)对齐显示$()"
+    }
+    ]
+}
