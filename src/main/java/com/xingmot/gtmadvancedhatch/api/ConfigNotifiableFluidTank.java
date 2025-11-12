@@ -35,6 +35,7 @@ public class ConfigNotifiableFluidTank extends NotifiableFluidTank implements IC
     @Persisted
     @DescSynced
     public long[] tankCapacity;
+    //TODO 锁空功能
     @Persisted
     protected boolean isLockedEmptySlot;
 
@@ -57,13 +58,18 @@ public class ConfigNotifiableFluidTank extends NotifiableFluidTank implements IC
         return MANAGED_FIELD_HOLDER;
     }
 
+    /**
+     * 外界使用时请调用下面这两个
+     */
     @Override
     public void newTankCapacity(long capacity) {
+        Arrays.fill(this.tankCapacity, capacity);
         resetBasicInfo(capacity);
     }
 
     @Override
     public void newTankCapacity(int tank, long capacity) {
+        this.tankCapacity[tank] = capacity;
         resetOneBasicInfo(tank, capacity);
     }
 
@@ -72,7 +78,9 @@ public class ConfigNotifiableFluidTank extends NotifiableFluidTank implements IC
         for (int i = 0; i < this.tankCapacity.length; i++) {
             this.resetOneBasicInfo(i, this.tankCapacity[i]);
             int finalI = i;
-            this.setFilter(i, (stack) -> stack.isFluidEqual(this.lockedFluids[finalI].getFluid()));
+            if(this.isLocked(finalI))
+                this.setFilter(i, (stack) -> stack.isFluidEqual(this.lockedFluids[finalI].getFluid()));
+            else setLocked(false, i);
         }
     }
 
@@ -261,8 +269,8 @@ public class ConfigNotifiableFluidTank extends NotifiableFluidTank implements IC
                 this.lockedFluids[tank].setFluid(fluidStack.copy());
                 this.lockedFluids[tank].getFluid()
                         .setAmount(FluidHelper.getBucket());
-                this.onContentsChanged();
                 this.setFilter(tank, (stack) -> stack.isFluidEqual(this.lockedFluids[tank].getFluid()));
+                this.onContentsChanged();
             } else {
                 this.lockedFluids[tank].setFluid(FluidStack.empty());
                 this.setFilter(tank, (stack) -> true);
