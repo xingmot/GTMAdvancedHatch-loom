@@ -8,7 +8,7 @@ import net.minecraft.world.item.Item;
 /**
  * 添加自定义标签，方便魔改
  */
-public class CustomTags {
+public class AHCustomTags {
 
     // 电网适配终端可被放入的物品的标签
     public static final TagKey<Item> ADAPTIVE_NET_ENERGY_OUT = TagUtil.createItemTag("adaptive_net/energy_out");

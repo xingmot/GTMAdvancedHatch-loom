@@ -32,6 +32,14 @@ public class AHFormattingUtil {
         }
     }
 
+    /**
+     * 彩色滚动字，需要放进tooltipBuilder或其他动态组件中否则不会滚动
+     * tips：Component.translate(key).getString()方法在注册阶段是拿不到翻译的
+     * tips2：获取物品名称更常用-> itemstack.getDisplayName() 会返回一个Component
+     * @param s 通常填入Component.translate(key).getString()
+     * @param speed 速度
+     * @param reverse 反转，为false时是从左往右滚动
+     */
     public static MutableComponent getRainbowScrollComponent(String s, RainbowSpeed speed, boolean reverse) {
         MutableComponent component = Component.empty();
         AHTooltipHelper.GTFormattingCode rainbow = speed == RainbowSpeed.FAST ? AHTooltipHelper.RAINBOW_FAST :

@@ -1,7 +1,7 @@
 package com.xingmot.gtmadvancedhatch.api.adaptivenet;
 
 import com.xingmot.gtmadvancedhatch.common.data.AHMachines;
-import com.xingmot.gtmadvancedhatch.common.data.recipe.CustomTags;
+import com.xingmot.gtmadvancedhatch.common.data.recipe.AHCustomTags;
 
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 
@@ -23,26 +23,26 @@ public class AdaptiveTerminalBehaviour {
 
     public static boolean isNetEnergyOutputHatch(ItemStack itemStack) {
         if (itemStack == null || itemStack.isEmpty()) return false;
-        return hasItem(ALL_NET_ENERGY_OUTPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(CustomTags.ADAPTIVE_NET_ENERGY_OUT);
+        return hasItem(ALL_NET_ENERGY_OUTPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(AHCustomTags.ADAPTIVE_NET_ENERGY_OUT);
     }
 
     public static boolean isNetEnergyInputHatch(ItemStack itemStack) {
         if (itemStack == null || itemStack.isEmpty()) return false;
-        return hasItem(ALL_NET_ENERGY_INPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(CustomTags.ADAPTIVE_NET_ENERGY_IN);
+        return hasItem(ALL_NET_ENERGY_INPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(AHCustomTags.ADAPTIVE_NET_ENERGY_IN);
     }
 
     public static boolean isNetLaserOutputHatch(ItemStack itemStack) {
         if (itemStack == null || itemStack.isEmpty()) return false;
-        return hasItem(ALL_NET_LASER_OUTPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(CustomTags.ADAPTIVE_NET_LASER_OUT);
+        return hasItem(ALL_NET_LASER_OUTPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(AHCustomTags.ADAPTIVE_NET_LASER_OUT);
     }
 
     public static boolean isNetLaserInputHatch(ItemStack itemStack) {
         if (itemStack == null || itemStack.isEmpty()) return false;
-        return hasItem(ALL_NET_LASER_INPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(CustomTags.ADAPTIVE_NET_LASER_IN);
+        return hasItem(ALL_NET_LASER_INPUT_HATCH_ITEM_LIST, itemStack) || itemStack.is(AHCustomTags.ADAPTIVE_NET_LASER_IN);
     }
 
     public static boolean isAnyTag(ItemStack itemStack) {
-        return itemStack.is(CustomTags.ADAPTIVE_NET_ENERGY_OUT) || itemStack.is(CustomTags.ADAPTIVE_NET_ENERGY_IN) || itemStack.is(CustomTags.ADAPTIVE_NET_LASER_OUT) || itemStack.is(CustomTags.ADAPTIVE_NET_LASER_IN);
+        return itemStack.is(AHCustomTags.ADAPTIVE_NET_ENERGY_OUT) || itemStack.is(AHCustomTags.ADAPTIVE_NET_ENERGY_IN) || itemStack.is(AHCustomTags.ADAPTIVE_NET_LASER_OUT) || itemStack.is(AHCustomTags.ADAPTIVE_NET_LASER_IN);
     }
 
     private static boolean hasItem(List<ItemStack> itemList, ItemStack itemStack) {
