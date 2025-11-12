@@ -1,7 +1,5 @@
 package com.xingmot.gtmadvancedhatch.common.machines;
 
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
-import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import com.xingmot.gtmadvancedhatch.api.ConfigNotifiableFluidTank;
 import com.xingmot.gtmadvancedhatch.api.IConfigFluidTransfer;
 import com.xingmot.gtmadvancedhatch.api.IMultiCapacity;
@@ -11,32 +9,25 @@ import com.xingmot.gtmadvancedhatch.util.AHUtil;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
-import com.gregtechceu.gtceu.api.gui.fancy.ConfiguratorPanel;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.TickableSubscription;
-import com.gregtechceu.gtceu.api.machine.fancyconfigurator.CircuitFancyConfigurator;
 import com.gregtechceu.gtceu.api.machine.feature.IInteractedMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IMachineLife;
-import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredIOPartMachine;
+import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiPart;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.common.data.GTItems;
-import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
-import com.gregtechceu.gtceu.config.ConfigHolder;
+import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import com.gregtechceu.gtceu.data.lang.LangHandler;
 
 import com.lowdragmc.lowdraglib.LDLib;
 import com.lowdragmc.lowdraglib.gui.widget.*;
-import com.lowdragmc.lowdraglib.side.fluid.FluidTransferHelper;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.TickTask;
@@ -57,7 +48,6 @@ import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +85,7 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
 
     @Override
     protected NotifiableFluidTank createTank(long initialCapacity, int slots, Object... args) {
-        if(this.maxCapacity == 0L)
+        if (this.maxCapacity == 0L)
             this.maxCapacity = getTankCapacity(initialCapacity, tier);
         ConfigNotifiableFluidTank fluidTank = new ConfigNotifiableFluidTank(this, slots, this.maxCapacity, this.io);
         fluidTank.setAllowSameFluids(true);
@@ -104,7 +94,7 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
 
     @Override
     public void onMachinePlaced(@Nullable LivingEntity player, ItemStack stack) {
-        if(tank instanceof ConfigNotifiableFluidTank cTank) {
+        if (tank instanceof ConfigNotifiableFluidTank cTank) {
             if (io == IO.IN) cTank.newTankCapacity(this.maxCapacity);
             else cTank.newTankCapacity(0L);
         }

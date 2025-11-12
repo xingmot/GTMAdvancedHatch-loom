@@ -1,23 +1,20 @@
 package com.xingmot.gtmadvancedhatch.common.data;
 
-import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.item.ComponentItem;
-import com.gregtechceu.gtceu.api.item.MetaMachineItem;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
-import com.gregtechceu.gtceu.common.data.GTMachines;
-import com.tterrag.registrate.util.entry.ItemEntry;
+
 import net.minecraft.world.item.Item;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.gregtechceu.gtceu.common.data.GTItems.*;
 import static com.gregtechceu.gtceu.common.data.GTMachines.*;
 
+import com.tterrag.registrate.util.entry.ItemEntry;
+
 public class RecipeConstants {
-    private RecipeConstants(){}
+
+    private RecipeConstants() {}
 
     public static final List<MachineDefinition> HUGE_TANK = List.of(
             SUPER_TANK[1],
@@ -34,8 +31,7 @@ public class RecipeConstants {
             QUANTUM_TANK[11],
             QUANTUM_TANK[12],
             QUANTUM_TANK[13],
-            QUANTUM_TANK[13]
-    );
+            QUANTUM_TANK[13]);
 
     public static final List<MachineDefinition> HUGE_CHEST = List.of(
             SUPER_CHEST[1],
@@ -52,8 +48,7 @@ public class RecipeConstants {
             QUANTUM_CHEST[11],
             QUANTUM_CHEST[12],
             QUANTUM_CHEST[13],
-            QUANTUM_CHEST[13]
-    );
+            QUANTUM_CHEST[13]);
 
     public static final List<ItemEntry<Item>> ELECTRIC_MOTOR = List.of(
             ELECTRIC_MOTOR_LV,
@@ -70,8 +65,7 @@ public class RecipeConstants {
             ELECTRIC_MOTOR_UIV,
             ELECTRIC_MOTOR_UXV,
             ELECTRIC_MOTOR_OpV,
-            ELECTRIC_MOTOR_OpV
-    );
+            ELECTRIC_MOTOR_OpV);
     public static final List<ItemEntry<ComponentItem>> ELECTRIC_PUMP = List.of(
             ELECTRIC_PUMP_LV,
             ELECTRIC_PUMP_LV,
@@ -87,8 +81,7 @@ public class RecipeConstants {
             ELECTRIC_PUMP_UIV,
             ELECTRIC_PUMP_UXV,
             ELECTRIC_PUMP_OpV,
-            ELECTRIC_PUMP_OpV
-    );
+            ELECTRIC_PUMP_OpV);
     public static final List<ItemEntry<ComponentItem>> FLUID_REGULATOR = List.of(
             FLUID_REGULATOR_LV,
             FLUID_REGULATOR_LV,
@@ -104,8 +97,7 @@ public class RecipeConstants {
             FLUID_REGULATOR_UIV,
             FLUID_REGULATOR_UXV,
             FLUID_REGULATOR_OpV,
-            FLUID_REGULATOR_OpV
-    );
+            FLUID_REGULATOR_OpV);
     public static final List<ItemEntry<ComponentItem>> CONVEYOR_MODULE = List.of(
             CONVEYOR_MODULE_LV,
             CONVEYOR_MODULE_LV,
@@ -121,8 +113,7 @@ public class RecipeConstants {
             CONVEYOR_MODULE_UIV,
             CONVEYOR_MODULE_UXV,
             CONVEYOR_MODULE_OpV,
-            CONVEYOR_MODULE_OpV
-    );
+            CONVEYOR_MODULE_OpV);
     public static final List<ItemEntry<Item>> ELECTRIC_PISTON = List.of(
             ELECTRIC_PISTON_LV,
             ELECTRIC_PISTON_LV,
@@ -138,8 +129,7 @@ public class RecipeConstants {
             ELECTRIC_PISTON_UIV,
             ELECTRIC_PISTON_UXV,
             ELECTRIC_PISTON_OpV,
-            ELECTRIC_PISTON_OpV
-    );
+            ELECTRIC_PISTON_OpV);
     public static final List<ItemEntry<ComponentItem>> ROBOT_ARM = List.of(
             ROBOT_ARM_LV,
             ROBOT_ARM_LV,
@@ -155,8 +145,7 @@ public class RecipeConstants {
             ROBOT_ARM_UIV,
             ROBOT_ARM_UXV,
             ROBOT_ARM_OpV,
-            ROBOT_ARM_OpV
-    );
+            ROBOT_ARM_OpV);
     public static final List<ItemEntry<Item>> FIELD_GENERATOR = List.of(
             FIELD_GENERATOR_LV,
             FIELD_GENERATOR_LV,
@@ -172,8 +161,7 @@ public class RecipeConstants {
             FIELD_GENERATOR_UIV,
             FIELD_GENERATOR_UXV,
             FIELD_GENERATOR_OpV,
-            FIELD_GENERATOR_OpV
-    );
+            FIELD_GENERATOR_OpV);
     public static final List<ItemEntry<Item>> EMITTER = List.of(
             EMITTER_LV,
             EMITTER_LV,
@@ -189,8 +177,7 @@ public class RecipeConstants {
             EMITTER_UIV,
             EMITTER_UXV,
             EMITTER_OpV,
-            EMITTER_OpV
-    );
+            EMITTER_OpV);
     public static final List<ItemEntry<Item>> SENSOR = List.of(
             SENSOR_LV,
             SENSOR_LV,
@@ -206,6 +193,5 @@ public class RecipeConstants {
             SENSOR_UIV,
             SENSOR_UXV,
             SENSOR_OpV,
-            SENSOR_OpV
-    );
+            SENSOR_OpV);
 }

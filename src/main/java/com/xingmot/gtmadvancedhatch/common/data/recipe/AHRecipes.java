@@ -4,6 +4,7 @@ import com.xingmot.gtmadvancedhatch.GTMAdvancedHatch;
 import com.xingmot.gtmadvancedhatch.common.data.AHItems;
 import com.xingmot.gtmadvancedhatch.common.data.AHMachines;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
+import com.xingmot.gtmadvancedhatch.common.data.RecipeConstants;
 
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.GTValues;
@@ -13,7 +14,6 @@ import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 
-import com.xingmot.gtmadvancedhatch.common.data.RecipeConstants;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -55,16 +55,16 @@ public class AHRecipes {
         // endregion
 
         // region 可配置流体仓
-        for(int tier : GTValues.tiersBetween(ULV, GTCEuAPI.isHighTier() ? MAX : UV)){
-            if(tier <= MV){
-                ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase()+"configurable_fluid_hatch_input"))
+        for (int tier : GTValues.tiersBetween(ULV, GTCEuAPI.isHighTier() ? MAX : UV)) {
+            if (tier <= MV) {
+                ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase() + "configurable_fluid_hatch_input"))
                         .outputItems(AHMachines.CONFIGURABLE_FLUID_HATCH_IMPORT_1X[tier].asStack())
                         .inputItems(GTMachines.FLUID_IMPORT_HATCH[tier].asStack())
                         .inputItems(RecipeConstants.SENSOR.get(tier).asStack())
                         .duration(200)
                         .EUt(GTValues.VA[tier])
                         .save(provider);
-                ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase()+"configurable_fluid_hatch_output"))
+                ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase() + "configurable_fluid_hatch_output"))
                         .outputItems(AHMachines.CONFIGURABLE_FLUID_HATCH_EXPORT_1X[tier].asStack())
                         .inputItems(GTMachines.FLUID_EXPORT_HATCH[tier].asStack())
                         .inputItems(RecipeConstants.SENSOR.get(tier).asStack())
@@ -116,7 +116,7 @@ public class AHRecipes {
                         .EUt(GTValues.VA[tier])
                         .save(provider);
             }
-            ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase()+"configurable_fluid_hatch_input"))
+            ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase() + "configurable_fluid_hatch_input"))
                     .outputItems(AHMachines.CONFIGURABLE_FLUID_HATCH_IMPORT_1X[tier].asStack())
                     .inputItems(GTMachines.FLUID_IMPORT_HATCH[tier].asStack())
                     .inputItems(RecipeConstants.HUGE_TANK.get(tier).asStack())
@@ -126,7 +126,7 @@ public class AHRecipes {
                     .duration(200)
                     .EUt(GTValues.VA[tier])
                     .save(provider);
-            ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase()+"configurable_fluid_hatch_output"))
+            ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id(GTValues.VN[tier].toLowerCase() + "configurable_fluid_hatch_output"))
                     .outputItems(AHMachines.CONFIGURABLE_FLUID_HATCH_EXPORT_1X[tier].asStack())
                     .inputItems(GTMachines.FLUID_EXPORT_HATCH[tier].asStack())
                     .inputItems(RecipeConstants.HUGE_TANK.get(tier).asStack())

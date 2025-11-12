@@ -3,16 +3,13 @@ package com.xingmot.gtmadvancedhatch.common.data;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.item.ComponentItem;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.gregtechceu.gtceu.common.data.GTItems;
+import static com.gregtechceu.gtceu.common.data.GTItems.*;
+
 import com.hepdd.gtmthings.data.CustomItems;
 import com.tterrag.registrate.util.entry.ItemEntry;
-import net.minecraft.world.item.Item;
-
-import static com.gregtechceu.gtceu.common.data.GTItems.*;
 
 public final class MachinesConstants {
 

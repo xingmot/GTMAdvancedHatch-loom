@@ -35,7 +35,7 @@ public class ConfigNotifiableFluidTank extends NotifiableFluidTank implements IC
     @Persisted
     @DescSynced
     public long[] tankCapacity;
-    //TODO 锁空功能
+    // TODO 锁空功能
     @Persisted
     protected boolean isLockedEmptySlot;
 
@@ -78,7 +78,7 @@ public class ConfigNotifiableFluidTank extends NotifiableFluidTank implements IC
         for (int i = 0; i < this.tankCapacity.length; i++) {
             this.resetOneBasicInfo(i, this.tankCapacity[i]);
             int finalI = i;
-            if(this.isLocked(finalI))
+            if (this.isLocked(finalI))
                 this.setFilter(i, (stack) -> stack.isFluidEqual(this.lockedFluids[finalI].getFluid()));
             else setLocked(false, i);
         }
