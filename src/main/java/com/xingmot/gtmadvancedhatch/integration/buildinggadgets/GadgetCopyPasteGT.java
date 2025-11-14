@@ -7,6 +7,10 @@ import com.xingmot.gtmadvancedhatch.integration.buildinggadgets.util.BuildingUti
 
 import com.gregtechceu.gtceu.api.block.MetaMachineBlock;
 import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
+import com.gregtechceu.gtceu.api.item.MetaMachineItem;
+import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+
+import com.lowdragmc.lowdraglib.LDLib;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -167,6 +171,11 @@ public class GadgetCopyPasteGT extends GadgetCopyPaste {
             if (GadgetNBT.getSetting(gadget, "bind")) {
                 ItemStack offhandItem = player.getOffhandItem();
                 if (offhandItem.is(AEItems.BLANK_PATTERN.asItem()) || offhandItem.is(AEItems.PROCESSING_PATTERN.asItem()) || offhandItem.is(AEItems.CRAFTING_PATTERN.asItem()) || offhandItem.is(AEItems.SMITHING_TABLE_PATTERN.asItem()) || offhandItem.is(AEItems.STONECUTTING_PATTERN.asItem())) {
+                    if (offhandItem.getCount() != 1) {
+                        if (LDLib.isClient())
+                            player.sendSystemMessage(Component.translatable("item.buildinggadgets2.partern_copy_message"));
+                        return InteractionResultHolder.fail(gadget);
+                    }
                     GenericStack[] materialList = getMaterialList(level, player, gadget);
                     // GTMAdvancedHatch.LOGGER.info(String.format("material list: %s", Arrays.toString(materialList)));
 
@@ -176,10 +185,22 @@ public class GadgetCopyPasteGT extends GadgetCopyPaste {
                             // offhandItem.getTag().toString()));
                         } else GTMAdvancedHatch.LOGGER.info(offhandItem.toString());
                         GenericStack out = Arrays.stream(materialList)
-                                .filter(a -> a.what() instanceof AEItemKey)
+                                .filter(a -> a.what() instanceof AEItemKey aeItemKey && aeItemKey.getItem() instanceof MetaMachineItem mitem && mitem.getDefinition() instanceof MultiblockMachineDefinition)
                                 .findAny().orElse(null);
-                        if (out == null) out = GenericStack.fromItemStack(new ItemStack(gadget.getItem()).setHoverName(Component.translatable("item.buildinggadgets2.partern")));
-                        else out = GenericStack.fromItemStack(((AEItemKey) out.what()).toStack().setHoverName(Component.translatable("item.buildinggadgets2.partern")));
+                        if (out == null) {
+                            out = Arrays.stream(materialList)
+                                    .filter(a -> a.what() instanceof AEItemKey)
+                                    .findAny()
+                                    .orElse(null);
+                            if (out == null)
+                                out = GenericStack.fromItemStack(new ItemStack(gadget.getItem()).setHoverName(Component.translatable("item.buildinggadgets2.partern.0")));
+                            else out = GenericStack.fromItemStack(((AEItemKey) out.what()).toStack()
+                                    .setHoverName(Component.translatable("item.buildinggadgets2.partern.1")));
+                        } else {
+                            ItemStack itemStack = ((AEItemKey) out.what()).toStack()
+                                    .setHoverName(Component.empty().append(out.what().getDisplayName()).append(Component.literal("x %d ".formatted(out.amount()))).append(Component.translatable("item.buildinggadgets2.partern.2")));
+                            out = new GenericStack(GenericStack.fromItemStack(itemStack).what(), out.amount());
+                        }
                         ItemStack is = AEItems.PROCESSING_PATTERN.asItem()
                                 .encode(materialList, new GenericStack[] { out });
                         is.getOrCreateTag().putString("encodePlayer", player.getName().getString());

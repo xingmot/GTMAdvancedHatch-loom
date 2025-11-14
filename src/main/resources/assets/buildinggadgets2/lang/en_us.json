@@ -1,5 +1,8 @@
 {
   "item.buildinggadgets2.gadget_copy_paste_gt": "GT复制工具",
-  "item.buildinggadgets2.partern": "多方块结构",
-  "item.buildinggadgets2.partern_copy_tooltip": "容器绑定模式下，样板放在副手，\n潜行右击地面将所需材料记录进样板中。"
+  "item.buildinggadgets2.partern.0": "多方块结构",
+  "item.buildinggadgets2.partern.1": "GT多方块结构",
+  "item.buildinggadgets2.partern.2": "(GT多方块机器)",
+  "item.buildinggadgets2.partern_copy_tooltip": "容器绑定模式下，样板放在副手，\n潜行右击地面将所需材料记录进样板中。",
+  "item.buildinggadgets2.partern_copy_message": "副手样板数量不为 1 ！"
 }
