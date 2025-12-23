@@ -1,5 +1,7 @@
 package com.xingmot.gtmadvancedhatch.api.adaptivenet;
 
+import cn.qiuye.gtmoremachine.utils.TeamUtils;
+import com.xingmot.gtmadvancedhatch.api.IMutableBind;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
 
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
@@ -20,19 +22,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.hepdd.gtmthings.api.capability.IBindable;
-import com.hepdd.gtmthings.utils.TeamUtil;
-
 /**
  * 指纹录入侧页（绑定uuid）
  * - 其获取的uuid已经是ftbteam的队伍uuid
  */
 public class BindUUIDFancyConfigurator implements IFancyConfigurator {
 
-    IBindable bindable;
+    IMutableBind mutableBind;
 
-    public BindUUIDFancyConfigurator(IBindable bindable) {
-        this.bindable = bindable;
+    public BindUUIDFancyConfigurator(IMutableBind mutableBind) {
+        this.mutableBind = mutableBind;
     }
 
     @Override
@@ -55,10 +54,10 @@ public class BindUUIDFancyConfigurator implements IFancyConfigurator {
     }
 
     private void bindUUID(Player player) {
-        if (bindable.getUUID().equals(MachinesConstants.UUID_ZERO)) {
-            bindable.setUUID(TeamUtil.getTeamUUID(player.getUUID()));
+        if (mutableBind.getUUID() == null || mutableBind.getUUID().equals(MachinesConstants.UUID_ZERO)) {
+            mutableBind.setUUID(TeamUtils.getTeamUUID(player.getUUID()));
         } else {
-            bindable.setUUID(MachinesConstants.UUID_ZERO);
+            mutableBind.setUUID(MachinesConstants.UUID_ZERO);
         }
     }
 

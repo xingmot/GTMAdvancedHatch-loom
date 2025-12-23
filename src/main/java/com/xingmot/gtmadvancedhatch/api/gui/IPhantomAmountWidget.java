@@ -5,9 +5,9 @@ package com.xingmot.gtmadvancedhatch.api.gui;
  */
 public interface IPhantomAmountWidget<T> {
 
-    long getAmount(int slot);
+    int getAmount(int slot);
 
-    void setAmount(int slot, long capacity);
+    void setAmount(int slot, int capacity);
 
     /**
      * @return 返回虚拟槽位的物品

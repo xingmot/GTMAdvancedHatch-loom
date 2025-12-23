@@ -1,5 +1,6 @@
 package com.xingmot.gtmadvancedhatch.integration.gtlcore;
 
+import cn.qiuye.gtmoremachine.common.data.machines.WirelessMachines;
 import com.xingmot.gtmadvancedhatch.common.AHRegistration;
 import com.xingmot.gtmadvancedhatch.common.data.AHTabs;
 
@@ -9,13 +10,9 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 
-import com.lowdragmc.lowdraglib.LDLib;
-
 import static com.gregtechceu.gtceu.api.GTValues.*;
-import static com.hepdd.gtmthings.data.WirelessMachines.registerWirelessLaserHatch;
 import static com.xingmot.gtmadvancedhatch.common.data.AHMachines.*;
 
-import com.gtladd.gtladditions.common.machine.GTLAddMachines;
 
 public class ExGTLMachines {
 
@@ -50,16 +47,9 @@ public class ExGTLMachines {
     public static MachineDefinition[] WIRELESS_ENERGY_OUTPUT_HATCH_67108863A;
 
     public static void init() {
-        if (!LDLib.isModLoaded("gtladditions")) {
-            WIRELESS_ENERGY_INPUT_HATCH_16777216A = registerWirelessLaserHatch(IO.IN, 16777216, PartAbility.INPUT_LASER, HIGHEST_TIERS);
-            WIRELESS_ENERGY_INPUT_HATCH_67108864A = registerWirelessLaserHatch(IO.IN, 67108864, PartAbility.INPUT_LASER, HIGHEST_TIERS);
-            WIRELESS_ENERGY_OUTPUT_HATCH_16777216A = registerWirelessLaserHatch(IO.OUT, 16777216, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
-            WIRELESS_ENERGY_OUTPUT_HATCH_67108863A = registerWirelessLaserHatch(IO.OUT, 67108863, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
-        } else {
-            WIRELESS_ENERGY_INPUT_HATCH_16777216A = GTLAddMachines.INSTANCE.getWIRELESS_LASER_INPUT_HATCH_16777216A();
-            WIRELESS_ENERGY_INPUT_HATCH_67108864A = GTLAddMachines.INSTANCE.getWIRELESS_LASER_INPUT_HATCH_67108864A();
-            WIRELESS_ENERGY_OUTPUT_HATCH_16777216A = GTLAddMachines.INSTANCE.getWIRELESS_LASER_OUTPUT_HATCH_16777216A();
-            WIRELESS_ENERGY_OUTPUT_HATCH_67108863A = GTLAddMachines.INSTANCE.getWIRELESS_LASER_OUTPUT_HATCH_67108863A();
-        }
+        WIRELESS_ENERGY_INPUT_HATCH_16777216A = WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_16777216A;
+        WIRELESS_ENERGY_INPUT_HATCH_67108864A = WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_67108863A;
+        WIRELESS_ENERGY_OUTPUT_HATCH_16777216A = WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_16777216A;
+        WIRELESS_ENERGY_OUTPUT_HATCH_67108863A = WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_67108863A;
     }
 }

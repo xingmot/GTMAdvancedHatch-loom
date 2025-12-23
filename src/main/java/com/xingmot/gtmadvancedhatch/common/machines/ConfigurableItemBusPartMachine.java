@@ -1,5 +1,6 @@
 package com.xingmot.gtmadvancedhatch.common.machines;
 
+import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.xingmot.gtmadvancedhatch.api.ConfigNotifiableItemStack;
 import com.xingmot.gtmadvancedhatch.api.IMultiCapacity;
 import com.xingmot.gtmadvancedhatch.api.gui.ConfigSlotWidget;
@@ -18,7 +19,6 @@ import com.gregtechceu.gtceu.api.machine.feature.IInteractedMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IMachineLife;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDistinctPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredIOPartMachine;
-import com.gregtechceu.gtceu.api.machine.trait.ItemHandlerProxyRecipeTrait;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.item.IntCircuitBehaviour;
@@ -77,14 +77,15 @@ public class ConfigurableItemBusPartMachine extends TieredIOPartMachine implemen
     @Persisted
     protected final NotifiableItemStackHandler circuitInventory;
     @Getter
-    protected final ItemHandlerProxyRecipeTrait combinedInventory;
+    @Persisted
+    @DescSynced
+    private boolean isDistinct = false;
 
     public ConfigurableItemBusPartMachine(IMachineBlockEntity holder, int tier, IO io, int size, Object... args) {
         super(holder, tier, io);
         this.size = size;
         this.inventory = this.createInventory(args);
         this.circuitInventory = this.createCircuitItemHandler(io);
-        this.combinedInventory = this.createCombinedItemHandler(io);
     }
 
     @Override
@@ -121,14 +122,14 @@ public class ConfigurableItemBusPartMachine extends TieredIOPartMachine implemen
     }
 
     @Override
-    public void setCapacity(int index, long capacity) {
+    public void setCapacity(int index, int capacity) {
         if (this.inventory instanceof ConfigNotifiableItemStack cfStack) {
             cfStack.setCapacity(index, capacity);
         }
     }
 
     @Override
-    public long getCapacity(int index) {
+    public int getCapacity(int index) {
         if (this.inventory instanceof ConfigNotifiableItemStack cfStack) {
             return cfStack.getCapacity(index);
         }
@@ -157,7 +158,7 @@ public class ConfigurableItemBusPartMachine extends TieredIOPartMachine implemen
                 for (int x = 0; x < rowSize; ++x) {
                     container.addWidget(new ConfigSlotWidget(cTransfer, cTransfer.storage, index, 4 + x * 18, 4 + y * 36 + 18,
                             true, this.io.support(IO.IN)).setBackground(GuiTextures.SLOT));
-                    container.addWidget((new PhantomItemCapacityWidget(cTransfer, cTransfer, (int) this.getCapacity(index), this.maxCapacity, index++,
+                    container.addWidget((new PhantomItemCapacityWidget(cTransfer, cTransfer, this.getCapacity(index), this.maxCapacity, index++,
                             4 + x * 18, 4 + y * 36))
                             .setDrawHoverTips(true)
                             .setBackground(GuiTextures.SLOT_DARK));
@@ -259,7 +260,7 @@ public class ConfigurableItemBusPartMachine extends TieredIOPartMachine implemen
                 if (stacks.contains(String.valueOf(i)))
                     cfStack.setLocked(true, i, ItemStack.of(stacks.getCompound(String.valueOf(i))));
                 else cfStack.setLocked(false, i, ItemStack.EMPTY);
-                cfStack.newCapacity(i, stack_capacity.getLong(String.valueOf(i)));
+                cfStack.newCapacity(i, stack_capacity.getInt(String.valueOf(i)));
             }
         }
         if (tag.contains("GhostCircuit")) {
@@ -297,20 +298,6 @@ public class ConfigurableItemBusPartMachine extends TieredIOPartMachine implemen
         return new NotifiableItemStackHandler(this, 0, IO.NONE);
     }
 
-    protected ItemHandlerProxyRecipeTrait createCombinedItemHandler(Object... args) {
-        if (args.length > 0) {
-            Object var3 = args[0];
-            if (var3 instanceof IO) {
-                IO io = (IO) var3;
-                if (io == IO.IN) {
-                    return new ItemHandlerProxyRecipeTrait(this, Set.of(this.getInventory(), this.circuitInventory), IO.IN, IO.NONE);
-                }
-            }
-        }
-
-        return new ItemHandlerProxyRecipeTrait(this, Set.of(this.getInventory(), this.circuitInventory), IO.NONE, IO.NONE);
-    }
-
     @Override
     public void onMachinePlaced(@Nullable LivingEntity player, ItemStack stack) {
         if (this.inventory instanceof ConfigNotifiableItemStack cfStack) {
@@ -330,14 +317,13 @@ public class ConfigurableItemBusPartMachine extends TieredIOPartMachine implemen
     @Override
     public void onLoad() {
         super.onLoad();
-        Level var2 = this.getLevel();
-        if (var2 instanceof ServerLevel serverLevel) {
+        if (this.getLevel() instanceof ServerLevel serverLevel) {
             this.initSlot();
             serverLevel.getServer().tell(new TickTask(0, this::updateInventorySubscription));
         }
-
-        this.inventorySubs = this.getInventory().addChangedListener(this::updateInventorySubscription);
-        this.combinedInventory.recomputeEnabledState();
+        getHandlerList().setDistinct(isDistinct);
+        getHandlerList().setColor(getPaintingColor());
+        inventorySubs = getInventory().addChangedListener(this::updateInventorySubscription);
     }
 
     public void onUnload() {
@@ -348,14 +334,9 @@ public class ConfigurableItemBusPartMachine extends TieredIOPartMachine implemen
         }
     }
 
-    public boolean isDistinct() {
-        return this.getInventory().isDistinct() && this.circuitInventory.isDistinct();
-    }
-
-    public void setDistinct(boolean isDistinct) {
-        this.getInventory().setDistinct(isDistinct);
-        this.circuitInventory.setDistinct(isDistinct);
-        this.combinedInventory.setDistinct(isDistinct);
+    public void setDistinct(boolean distinct) {
+        isDistinct = (io != IO.OUT && distinct);
+        getHandlerList().setDistinctAndNotify(isDistinct);
     }
 
     public void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {

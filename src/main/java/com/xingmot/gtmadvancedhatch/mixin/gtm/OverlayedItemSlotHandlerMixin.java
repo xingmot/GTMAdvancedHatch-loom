@@ -24,4 +24,9 @@ public class OverlayedItemSlotHandlerMixin {
     private void initMixin(ItemStack stackToMirror, int slotLimit, CallbackInfo ci) {
         this.slotLimit = Math.min(slotLimit, itemStack.getMaxStackSize() * (slotLimit / 64));
     }
+
+    @Inject(remap = false, method = "<init>(Lnet/minecraft/world/item/ItemStack;II)V", at = @At("RETURN"))
+    private void initMixin(ItemStack itemStack, int slotLimit, int count, CallbackInfo ci) {
+        this.slotLimit = Math.min(slotLimit, itemStack.getMaxStackSize() * (slotLimit / 64));
+    }
 }

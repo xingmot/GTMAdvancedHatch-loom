@@ -1,5 +1,8 @@
 package com.xingmot.gtmadvancedhatch.common.data.recipe;
 
+import cn.qiuye.gtmoremachine.GTmm;
+import cn.qiuye.gtmoremachine.common.data.GTMMItems;
+import cn.qiuye.gtmoremachine.common.data.machines.WirelessMachines;
 import com.xingmot.gtmadvancedhatch.GTMAdvancedHatch;
 import com.xingmot.gtmadvancedhatch.common.data.AHItems;
 import com.xingmot.gtmadvancedhatch.common.data.AHMachines;
@@ -26,10 +29,6 @@ import java.util.function.Consumer;
 import static com.gregtechceu.gtceu.api.GTValues.*;
 import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLER_RECIPES;
 import static com.xingmot.gtmadvancedhatch.common.data.AHMachines.NET_HIGH_TIERS2;
-
-import com.hepdd.gtmthings.GTMThings;
-import com.hepdd.gtmthings.data.CustomItems;
-import com.hepdd.gtmthings.data.WirelessMachines;
 
 public class AHRecipes {
 
@@ -245,7 +244,7 @@ public class AHRecipes {
         // region 电网仓
         for (int tier : GTValues.tiersBetween(GTValues.LV, GTCEuAPI.isHighTier() ? GTValues.MAX : GTValues.UHV)) {
             // region 1A电网仓配方
-            if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase())))
+            if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase())))
                 ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_input_hatch_" + GTValues.VN[tier].toLowerCase()))
                         .outputItems(AHMachines.NET_ENERGY_INPUT_HATCH[tier], 1)
                         .inputItems(WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH[tier], 4)
@@ -267,7 +266,7 @@ public class AHRecipes {
                         .duration(400)
                         .EUt(GTValues.VA[GTValues.MAX])
                         .save(provider);
-            if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase())))
+            if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase())))
                 ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_output_hatch_" + GTValues.VN[tier].toLowerCase()))
                         .outputItems(AHMachines.NET_ENERGY_OUTPUT_HATCH[tier], 1)
                         .inputItems(WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH[tier], 4)
@@ -291,7 +290,7 @@ public class AHRecipes {
                         .save(provider);
             // endregion
             // region 4A电网仓配方
-            if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_4a")))
+            if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_4a")))
                 ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_input_hatch_" + GTValues.VN[tier].toLowerCase() + "_4a"))
                         .outputItems(AHMachines.NET_ENERGY_INPUT_HATCH_4A[tier], 1)
                         .inputItems(WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_4A[tier], 4)
@@ -315,7 +314,7 @@ public class AHRecipes {
                         .duration(400)
                         .EUt(GTValues.VA[GTValues.MAX])
                         .save(provider);
-            if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_4a")))
+            if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_4a")))
                 ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_output_hatch_" + GTValues.VN[tier].toLowerCase() + "_4a"))
                         .outputItems(AHMachines.NET_ENERGY_OUTPUT_HATCH_4A[tier], 1)
                         .inputItems(WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_4A[tier], 4)
@@ -341,7 +340,7 @@ public class AHRecipes {
                         .save(provider);
             // endregion
             // region 16A电网仓配方
-            if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_16a")))
+            if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_16a")))
                 ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_input_hatch_" + GTValues.VN[tier].toLowerCase() + "_16a"))
                         .outputItems(AHMachines.NET_ENERGY_INPUT_HATCH_16A[tier], 1)
                         .inputItems(WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_16A[tier], 4)
@@ -365,7 +364,7 @@ public class AHRecipes {
                         .duration(400)
                         .EUt(GTValues.VA[GTValues.MAX])
                         .save(provider);
-            if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_16a")))
+            if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_16a")))
                 ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_output_hatch_" + GTValues.VN[tier].toLowerCase() + "_16a"))
                         .outputItems(AHMachines.NET_ENERGY_OUTPUT_HATCH_16A[tier], 1)
                         .inputItems(WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_16A[tier], 4)
@@ -393,13 +392,13 @@ public class AHRecipes {
             if (tier >= GTValues.EV) {
                 // region 64A电网仓配方
                 ItemStack stack;
-                ResourceLocation wireless_input_64 = GTMThings.id(GTValues.VN[tier].toLowerCase() + "_64a_wireless_energy_input_hatch");
-                ResourceLocation wireless_output_64 = GTMThings.id(GTValues.VN[tier].toLowerCase() + "_64a_wireless_energy_output_hatch");
+                ResourceLocation wireless_input_64 = GTmm.id(GTValues.VN[tier].toLowerCase() + "_64a_wireless_energy_input_hatch");
+                ResourceLocation wireless_output_64 = GTmm.id(GTValues.VN[tier].toLowerCase() + "_64a_wireless_energy_output_hatch");
                 stack = WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_16A[tier].asStack(16);
                 // 若 GTMT 64A仓方块已注册则使用64A仓
                 if (isRegisted(wireless_input_64))
                     stack = new ItemStack(Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(wireless_input_64)), 4);
-                if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_64a")))
+                if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_input_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_64a")))
                     ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_input_hatch_" + GTValues.VN[tier].toLowerCase() + "_64a"))
                             .outputItems(AHMachines.NET_ENERGY_INPUT_HATCH_64A[tier], 1)
                             .inputItems(stack)
@@ -426,7 +425,7 @@ public class AHRecipes {
                 stack = WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_16A[tier].asStack(16);
                 if (isRegisted(wireless_output_64))
                     stack = new ItemStack(Objects.requireNonNull(ForgeRegistries.BLOCKS.getValue(wireless_output_64)), 4);
-                if (tier != GTValues.MAX || isRegistedRecipe(GTMThings.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_64a")))
+                if (tier != GTValues.MAX || isRegistedRecipe(GTmm.id("wireless_energy_output_hatch_" + GTValues.VN[GTValues.MAX].toLowerCase() + "_64a")))
                     ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_energy_output_hatch_" + GTValues.VN[tier].toLowerCase() + "_64a"))
                             .outputItems(AHMachines.NET_ENERGY_OUTPUT_HATCH_64A[tier], 1)
                             .inputItems(stack)
@@ -610,7 +609,7 @@ public class AHRecipes {
                 .inputItems(AHMachines.NET_ENERGY_OUTPUT_HATCH[HV], 4)
                 .inputItems(GTItems.SENSOR_HV, 4)
                 .inputItems(WirelessMachines.WIRELESS_ENERGY_INTERFACE, 1)
-                .inputItems(CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_HV_4A, 1)
+                .inputItems(GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_HV_4A, 1)
                 .inputItems(GTBlocks.COIL_NICHROME, 1)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
                 .duration(400)
@@ -621,7 +620,7 @@ public class AHRecipes {
                 .inputItems(AHMachines.NET_ENERGY_INPUT_HATCH[HV], 4)
                 .inputItems(GTItems.SENSOR_HV, 4)
                 .inputItems(WirelessMachines.WIRELESS_ENERGY_INTERFACE, 1)
-                .inputItems(CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_HV_4A, 1)
+                .inputItems(GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_HV_4A, 1)
                 .inputItems(GTBlocks.COIL_NICHROME, 1)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
                 .duration(400)
@@ -632,7 +631,7 @@ public class AHRecipes {
                 .inputItems(AHMachines.NET_ENERGY_OUTPUT_HATCH_256A[LuV], 4)
                 .inputItems(GTItems.SENSOR_LuV, 4)
                 .inputItems(WirelessMachines.WIRELESS_ENERGY_INTERFACE, 1)
-                .inputItems(CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV_4A, 1)
+                .inputItems(GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV_4A, 1)
                 .inputItems(GTBlocks.COIL_HSSG, 1)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
                 .duration(400)
@@ -643,7 +642,7 @@ public class AHRecipes {
                 .inputItems(AHMachines.NET_ENERGY_INPUT_HATCH_256A[LuV], 4)
                 .inputItems(GTItems.SENSOR_LuV, 4)
                 .inputItems(WirelessMachines.WIRELESS_ENERGY_INTERFACE, 1)
-                .inputItems(CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV_4A, 1)
+                .inputItems(GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV_4A, 1)
                 .inputItems(GTBlocks.COIL_HSSG, 1)
                 .inputFluids(GTMaterials.SolderingAlloy.getFluid(576))
                 .duration(400)

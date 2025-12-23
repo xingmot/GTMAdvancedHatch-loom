@@ -1,14 +1,15 @@
 package com.xingmot.gtmadvancedhatch.api.adaptivenet;
 
 import com.gregtechceu.gtceu.api.gui.fancy.IFancyConfigurator;
+import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
+import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 import com.gregtechceu.gtceu.data.lang.LangHandler;
 
-import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
 import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib.gui.texture.ResourceTexture;
-import com.lowdragmc.lowdraglib.gui.widget.*;
-import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
-
+import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
+import com.lowdragmc.lowdraglib.gui.widget.Widget;
+import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -23,13 +24,13 @@ import java.util.List;
  */
 public class NetHatchInvFancyConfigurator implements IFancyConfigurator {
 
-    final ItemStackTransfer netEnergyOutputSlot;
-    final ItemStackTransfer netEnergyInputSlot;
-    final ItemStackTransfer netLaserOutputSlot;
-    final ItemStackTransfer netLaserInputSlot;
+    final CustomItemStackHandler netEnergyOutputSlot;
+    final CustomItemStackHandler netEnergyInputSlot;
+    final CustomItemStackHandler netLaserOutputSlot;
+    final CustomItemStackHandler netLaserInputSlot;
 
-    public NetHatchInvFancyConfigurator(ItemStackTransfer netEnergyOutputSlot, ItemStackTransfer netEnergyInputSlot,
-                                        ItemStackTransfer netLaserOutputSlot, ItemStackTransfer netLaserInputSlot) {
+    public NetHatchInvFancyConfigurator(CustomItemStackHandler netEnergyOutputSlot, CustomItemStackHandler netEnergyInputSlot,
+                                        CustomItemStackHandler netLaserOutputSlot, CustomItemStackHandler netLaserInputSlot) {
         this.netEnergyOutputSlot = netEnergyOutputSlot;
         this.netEnergyInputSlot = netEnergyInputSlot;
         this.netLaserOutputSlot = netLaserOutputSlot;
@@ -43,7 +44,7 @@ public class NetHatchInvFancyConfigurator implements IFancyConfigurator {
 
     @Override
     public IGuiTexture getIcon() {
-        return new GuiTextureGroup(new ResourceTexture("gtceu:textures/gui/widget/energy_bar_overlay.png"));
+        return new ResourceTexture("gtceu:textures/gui/widget/energy_bar_overlay.png");
     }
 
     @Override

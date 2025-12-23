@@ -1,6 +1,8 @@
 package com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch;
 
-import com.xingmot.gtmadvancedhatch.api.NoConsumeNotifiabbleEnergyContainer;
+import cn.qiuye.gtmoremachine.api.misc.wireless.energy.WirelessEnergyContainer;
+import cn.qiuye.gtmoremachine.utils.TeamUtils;
+import com.xingmot.gtmadvancedhatch.api.NoConsumeNotifiableEnergyContainer;
 import com.xingmot.gtmadvancedhatch.api.adaptivenet.*;
 import com.xingmot.gtmadvancedhatch.common.data.AHItems;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
@@ -41,8 +43,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import com.hepdd.gtmthings.api.misc.WirelessEnergyManager;
-import com.hepdd.gtmthings.utils.TeamUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -79,20 +79,20 @@ public class AdaptiveNetEnergyHatchPartMachine extends NetEnergyHatchPartMachine
     private TickableSubscription updNet;
     private final String special;
 
-    public AdaptiveNetEnergyHatchPartMachine(IMachineBlockEntity holder, IO io) {
-        super(holder, 0, io, 1);
+    public AdaptiveNetEnergyHatchPartMachine(IMachineBlockEntity holder, IO io,boolean isLaser) {
+        super(holder, 0, io, 1,isLaser);
         this.adaptiveSlave = new AdaptiveSlave(this, AdaptiveConstants.NET_TYPE_ENERGY);
         if (io == IO.IN) special = AdaptiveConstants.NET_ENERGY_SPECIAL_INPUT_HATCH;
         else special = AdaptiveConstants.NET_ENERGY_SPECIAL_OUTPUT_HATCH;
     }
 
     @Override
-    protected NoConsumeNotifiabbleEnergyContainer createEnergyContainer(Object... args) {
-        NoConsumeNotifiabbleEnergyContainer container;
+    protected NoConsumeNotifiableEnergyContainer createEnergyContainer(Object... args) {
+        NoConsumeNotifiableEnergyContainer container;
         if (this.io == IO.OUT) {
-            container = NoConsumeNotifiabbleEnergyContainer.emitterContainer(this, this.maxEnergy, this.voltage, this.amps);
+            container = NoConsumeNotifiableEnergyContainer.emitterContainer(this, this.maxEnergy, this.voltage, this.amps);
         } else {
-            container = NoConsumeNotifiabbleEnergyContainer.receiverContainer(this, this.maxEnergy, this.voltage, this.amps);
+            container = NoConsumeNotifiableEnergyContainer.receiverContainer(this, this.maxEnergy, this.voltage, this.amps);
         }
 
         return container;
@@ -112,7 +112,7 @@ public class AdaptiveNetEnergyHatchPartMachine extends NetEnergyHatchPartMachine
 
     // =============================== 电网仓更新逻辑、自适配更新逻辑 ==================================
     private void updateSubscription() {
-        if (super.owner_uuid != null) {
+        if (this.getOwnerUUID() != null) {
             this.updEnergySubs = this.subscribeServerTick(this.updEnergySubs, this::updateEnergy);
         } else if (this.updEnergySubs != null) {
             this.updEnergySubs.unsubscribe();
@@ -133,32 +133,44 @@ public class AdaptiveNetEnergyHatchPartMachine extends NetEnergyHatchPartMachine
     }
 
     // 配方会默认直接拉电网，但这两个方法仍然可以兜底
+    private void updateEnergy() {
+        if (this.getUUID() != null) {
+            if (this.io == IO.IN) {
+                this.useEnergy();
+            } else {
+                this.addEnergy();
+            }
+
+        }
+    }
+
     private void useEnergy() {
         long currentStored = this.energyContainer.getEnergyStored();
         long maxStored = this.energyContainer.getEnergyCapacity();
         long changeStored = Math.min(maxStored - currentStored, this.energyContainer.getInputVoltage() * this.energyContainer.getInputAmperage());
-        if (currentStored != maxStored && WirelessEnergyManager.addEUToGlobalEnergyMap(this.owner_uuid, -changeStored, this)) {
-            this.energyContainer.setEnergyStored(maxStored);
+        if (changeStored > 0L) {
+            WirelessEnergyContainer container = this.getWirelessEnergyContainer();
+            if (container != null) {
+                changeStored = container.removeEnergy(changeStored, this);
+                if (changeStored > 0L) {
+                    this.energyContainer.setEnergyStored(currentStored + changeStored);
+                }
+
+            }
         }
     }
 
     private void addEnergy() {
         long currentStored = this.energyContainer.getEnergyStored();
-        if (currentStored != 0L) {
-            WirelessEnergyManager.addEUToGlobalEnergyMap(this.owner_uuid, currentStored, this);
-            this.energyContainer.setEnergyStored(0L);
-        }
-    }
+        if (currentStored > 0L) {
+            long changeStored = Math.min(this.energyContainer.getOutputVoltage() * this.energyContainer.getOutputAmperage(), currentStored);
+            WirelessEnergyContainer container = this.getWirelessEnergyContainer();
+            if (container != null) {
+                changeStored = container.addEnergy(changeStored, this);
+                if (changeStored > 0L) {
+                    this.energyContainer.setEnergyStored(currentStored - changeStored);
+                }
 
-    private void updateEnergy() {
-        if (super.owner_uuid != null) {
-            if (((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid == null) {
-                ((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid = this.owner_uuid;
-            }
-            if (this.io == IO.IN) {
-                this.useEnergy();
-            } else {
-                this.addEnergy();
             }
         }
     }
@@ -173,10 +185,10 @@ public class AdaptiveNetEnergyHatchPartMachine extends NetEnergyHatchPartMachine
         ItemStack is = player.getItemInHand(hand);
         if (!is.isEmpty())
             if (is.is(GTItems.TOOL_DATA_STICK.asItem())) {
-                this.owner_uuid = player.getUUID();
-                ((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid = player.getUUID();
+                this.setOwnerUUID(player.getUUID());
+                ((NoConsumeNotifiableEnergyContainer) this.energyContainer).owner_uuid = player.getUUID();
                 if (LDLib.isClient())
-                    player.sendSystemMessage(Component.translatable("gtmthings.machine.wireless_energy_hatch.tooltip.bind", TeamUtil.GetName(player)));
+                    player.sendSystemMessage(Component.translatable("gtmoremachine.machine.wireless_energy_hatch.tooltip.bind", TeamUtils.getName(player)));
                 this.updateSubscription();
                 return InteractionResult.SUCCESS;
                 // 网络配置内存
@@ -193,10 +205,10 @@ public class AdaptiveNetEnergyHatchPartMachine extends NetEnergyHatchPartMachine
         if (is.isEmpty()) {
             return false;
         } else if (is.is(GTItems.TOOL_DATA_STICK.asItem())) {
-            this.owner_uuid = null;
-            ((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid = null;
+            this.setOwnerUUID(null);
+            ((NoConsumeNotifiableEnergyContainer) this.energyContainer).owner_uuid = null;
             if (LDLib.isClient()) {
-                player.sendSystemMessage(Component.translatable("gtmthings.machine.wireless_energy_hatch.tooltip.unbind"));
+                player.sendSystemMessage(Component.translatable("gtmoremachine.machine.wireless_energy_hatch.tooltip.unbind"));
             }
             this.updateSubscription();
             return true;
@@ -248,9 +260,9 @@ public class AdaptiveNetEnergyHatchPartMachine extends NetEnergyHatchPartMachine
     @Override
     public void onMachinePlaced(@Nullable LivingEntity placer, ItemStack stack) {
         if (placer instanceof Player player) {
-            UUID uuid = TeamUtil.getTeamUUID(player.getUUID());
+            UUID uuid = TeamUtils.getTeamUUID(player.getUUID());
             setUUID(uuid);
-            ((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).setOwner_uuid(uuid);
+            ((NoConsumeNotifiableEnergyContainer) this.energyContainer).setOwner_uuid(uuid);
             // 若副手为网络配置闪存且数据不为空，则自动应用
             ItemStack offhandItem = player.getOffhandItem();
             if (offhandItem.is(AHItems.TOOL_NET_DATA_STICK.asItem()) && offhandItem.hasTag())
@@ -278,13 +290,8 @@ public class AdaptiveNetEnergyHatchPartMachine extends NetEnergyHatchPartMachine
 
     // =============================== IBindable ==================================
     @Override
-    public UUID getUUID() {
-        return this.owner_uuid;
-    }
-
-    @Override
     public void setUUID(UUID uuid) {
-        this.owner_uuid = uuid;
+        this.setOwnerUUID(uuid);
     }
 
     public void setNetUUID(UUID uuid) {

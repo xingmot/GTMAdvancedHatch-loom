@@ -4,7 +4,6 @@ import com.xingmot.gtmadvancedhatch.GTMAdvancedHatch;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
 import com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch.AdaptiveNetEnergyHatchPartMachine;
 import com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch.AdaptiveNetEnergyTerminal;
-import com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch.AdaptiveNetLaserHatchPartMachine;
 import com.xingmot.gtmadvancedhatch.integration.jade.caps.IAdaptiveNetCap;
 import com.xingmot.gtmadvancedhatch.util.AHUtil;
 
@@ -88,26 +87,6 @@ public class AdaptiveNetProvider extends CapabilityBlockProvider<IAdaptiveNetCap
                         return a.getFrequency();
                     }
                 };
-            } else if (metaMachine instanceof AdaptiveNetLaserHatchPartMachine a) {
-                return new IAdaptiveNetCap() {
-
-                    @Override
-                    public UUID getUUID() {
-                        return a.getNet_uuid();
-                    }
-
-                    @Override
-                    public String getName() {
-                        if (a.getNet_uuid().equals(MachinesConstants.UUID_ZERO))
-                            return "everyone";
-                        return AHUtil.getTeamName(level, a.getUUID()).getString();
-                    }
-
-                    @Override
-                    public long getFrequency() {
-                        return a.getFrequency();
-                    }
-                };
             }
         }
         return null;
@@ -137,7 +116,7 @@ public class AdaptiveNetProvider extends CapabilityBlockProvider<IAdaptiveNetCap
             tooltip.add(Component.translatable("gtmadvancedhatch.gui.auto_rebind").append(c));
             if (frequency != 0 && isSlave)
                 tooltip.add(Component.translatable("gtmadvancedhatch.machine.adaptive.fail").withStyle(ChatFormatting.BLUE));
-        } else if (capData.hasUUID("UUID") && metaMachine instanceof AdaptiveNetEnergyHatchPartMachine || metaMachine instanceof AdaptiveNetLaserHatchPartMachine) {
+        } else if (capData.hasUUID("UUID") && metaMachine instanceof AdaptiveNetEnergyHatchPartMachine) {
             tooltips(tooltip, capData);
         }
     }

@@ -54,7 +54,7 @@ public class CapacityAmountSetWidget<T> extends Widget {
 
     public void setNewAmount(String amount) {
         try {
-            long newAmount = Long.parseLong(amount);
+            int newAmount = Integer.parseInt(amount);
             if (this.index < 0) {
                 return;
             }

@@ -1,5 +1,6 @@
 package com.xingmot.gtmadvancedhatch.api.gui;
 
+import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
 import com.xingmot.gtmadvancedhatch.api.ConfigNotifiableItemStack;
 import com.xingmot.gtmadvancedhatch.api.IConfigTransfer;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
@@ -17,8 +18,6 @@ import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
 import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib.gui.texture.ResourceTexture;
 import com.lowdragmc.lowdraglib.gui.util.DrawerHelper;
-import com.lowdragmc.lowdraglib.gui.widget.SlotWidget;
-import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
 import com.lowdragmc.lowdraglib.side.item.IItemTransfer;
 import com.lowdragmc.lowdraglib.utils.ColorUtils;
 import com.lowdragmc.lowdraglib.utils.Position;
@@ -58,6 +57,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.emi.emi.api.stack.EmiStack;
 import lombok.Setter;
 import mezz.jei.api.ingredients.ITypedIngredient;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +72,7 @@ public class PhantomItemCapacityWidget extends SlotWidget implements IPhantomAmo
     public int maxCapacity;
     public int lastSlotCapacity;
     public ItemStack lastPhantomStack;
-    public IConfigTransfer<ItemStackTransfer, ItemStack, ItemStack> icItemTransfer;
+    public IConfigTransfer<ItemStackHandler, ItemStack, ItemStack> icItemTransfer;
     /** 锁定滚动，每次打开gui时会自动锁定全部槽位 */
     @Setter
     protected boolean lockScroll = true;
@@ -83,7 +84,7 @@ public class PhantomItemCapacityWidget extends SlotWidget implements IPhantomAmo
     private final Supplier<ItemStack> phantomItemGetter;
     private final Consumer<ItemStack> phantomItemSetter;
 
-    public PhantomItemCapacityWidget(IConfigTransfer<ItemStackTransfer, ItemStack, ItemStack> icItemTransfer, IItemTransfer itemHandler,
+    public PhantomItemCapacityWidget(IConfigTransfer<ItemStackHandler, ItemStack, ItemStack> icItemTransfer, IItemHandler itemHandler,
                                      int currentCapacity, int maxCapacity, int slotIndex, int xPosition, int yPosition) {
         this(icItemTransfer, currentCapacity, maxCapacity, slotIndex, xPosition, yPosition,
                 () -> icItemTransfer.getLockedRef().getStackInSlot(slotIndex),
@@ -99,7 +100,7 @@ public class PhantomItemCapacityWidget extends SlotWidget implements IPhantomAmo
         this.slot = slotIndex;
     }
 
-    public PhantomItemCapacityWidget(IConfigTransfer<ItemStackTransfer, ItemStack, ItemStack> icItemTransfer,
+    public PhantomItemCapacityWidget(IConfigTransfer<ItemStackHandler, ItemStack, ItemStack> icItemTransfer,
                                      int currentCapacity, int maxCapacity, int slotIndex, int xPosition, int yPosition, Supplier<ItemStack> phantomItemGetter, Consumer<ItemStack> phantomItemSetter) {
         super(icItemTransfer.getLockedRef(), slotIndex, xPosition, yPosition);
         this.canPutItems = false;
@@ -113,12 +114,12 @@ public class PhantomItemCapacityWidget extends SlotWidget implements IPhantomAmo
     }
 
     @Override
-    public long getAmount(int slot) {
+    public int getAmount(int slot) {
         return this.lastSlotCapacity;
     }
 
     @Override
-    public void setAmount(int slot, long capacity) {
+    public void setAmount(int slot, int capacity) {
         this.lastSlotCapacity = (int) capacity;
     }
 
@@ -294,7 +295,7 @@ public class PhantomItemCapacityWidget extends SlotWidget implements IPhantomAmo
     @Override
     public void handleClientAction(int id, FriendlyByteBuf buffer) {
         switch (id) {
-            case MachinesConstants.SCROLL_ACTION_ID -> this.handleScrollAction(buffer.readLong());
+            case MachinesConstants.SCROLL_ACTION_ID -> this.handleScrollAction(buffer.readInt());
             case 0 -> {
                 if (this.phantomItemSetter != null) {
                     this.phantomItemSetter.accept(buffer.readItem());
@@ -310,7 +311,7 @@ public class PhantomItemCapacityWidget extends SlotWidget implements IPhantomAmo
     }
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    private void handleScrollAction(long newAmount) {
+    private void handleScrollAction(int newAmount) {
         if (this.getHandler() != null)
             if (icItemTransfer.isTruncate(this.slot, newAmount) && !isWarned) {
                 setWarnedAndWrite(true);

@@ -1,11 +1,12 @@
 package com.xingmot.gtmadvancedhatch.common.data;
 
+import cn.qiuye.gtmoremachine.GTmm;
+import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.xingmot.gtmadvancedhatch.GTMAdvancedHatch;
 import com.xingmot.gtmadvancedhatch.common.AHRegistration;
 import com.xingmot.gtmadvancedhatch.common.machines.*;
 import com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch.AdaptiveNetEnergyHatchPartMachine;
 import com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch.AdaptiveNetEnergyTerminal;
-import com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch.AdaptiveNetLaserHatchPartMachine;
 import com.xingmot.gtmadvancedhatch.config.AHConfig;
 import com.xingmot.gtmadvancedhatch.util.AHFormattingUtil;
 
@@ -19,8 +20,6 @@ import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.registry.registrate.MachineBuilder;
-import com.gregtechceu.gtceu.client.renderer.machine.OverlayTieredMachineRenderer;
-import com.gregtechceu.gtceu.client.renderer.machine.WorkableTieredHullMachineRenderer;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
@@ -33,9 +32,10 @@ import java.util.*;
 import java.util.function.BiFunction;
 
 import static com.gregtechceu.gtceu.api.GTValues.*;
+import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 import static com.xingmot.gtmadvancedhatch.common.data.MachinesConstants.getLockItemOutputBusSlot;
 
-import com.hepdd.gtmthings.GTMThings;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class AHMachines {
@@ -54,8 +54,8 @@ public class AHMachines {
             (tier, builder) -> builder.langValue(VNF[tier] + " Output Bus")
                     .rotationState(RotationState.ALL)
                     .abilities(PartAbility.EXPORT_ITEMS)
-                    .renderer(() -> new OverlayTieredMachineRenderer(tier,
-                            GTCEu.id("block/machine/part/item_bus.export")))
+                    .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+                    .colorOverlayTieredHullModel(OVERLAY_ITEM_HATCH_OUTPUT,"overlay_pipe", "overlay_pipe_out_emissive")
                     .tooltips(Component.translatable("gtmadvancedhatch.machine.lock_item_output.tooltip"),
                             Component.translatable("gtmadvancedhatch.machine.lock_item_output.tooltip2"),
                             Component.translatable("gtceu.machine.item_bus.export.tooltip"),
@@ -64,7 +64,6 @@ public class AHMachines {
                                             LockItemOutputBus.getLockItemOutputBusSlotLimit(tier) / 64))),
                             Component.translatable("gtceu.universal.tooltip.item_storage_capacity",
                                     getLockItemOutputBusSlot(tier)))
-                    .compassNode("item_bus")
                     .register(),
             GTValues.tiersBetween(ULV, GTCEuAPI.isHighTier() ? MAX : UV));
     // 可配置总线
@@ -168,43 +167,41 @@ public class AHMachines {
             PartAbility.OUTPUT_LASER, NET_HIGH_TIERS);
     // region 电网适配系统
     public static MachineDefinition ADAPTIVE_NET_ENERGY_INPUT_HATCH = AHRegistration.registrate.machine(
-            "adaptive_net_energy_input_hatch", holder -> new AdaptiveNetEnergyHatchPartMachine(holder, IO.IN))
+            "adaptive_net_energy_input_hatch", holder -> new AdaptiveNetEnergyHatchPartMachine(holder, IO.IN,false))
             .rotationState(RotationState.ALL)
-            .renderer(() -> new OverlayTieredMachineRenderer(14, GTMThings.id("block/machine/part/energy_hatch.input")))
+            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+            .overlayTieredHullModel(GTmm.id("block/machine/part/energy_input_hatch"))
             .abilities(PartAbility.INPUT_ENERGY)
-            .compassNode("energy_hatch")
             .tier(14)
             .register();
     public static MachineDefinition ADAPTIVE_NET_ENERGY_OUTPUT_HATCH = AHRegistration.registrate.machine(
-            "adaptive_net_energy_output_hatch", holder -> new AdaptiveNetEnergyHatchPartMachine(holder, IO.OUT))
+            "adaptive_net_energy_output_hatch", holder -> new AdaptiveNetEnergyHatchPartMachine(holder, IO.OUT,false))
             .rotationState(RotationState.ALL)
-            .renderer(
-                    () -> new OverlayTieredMachineRenderer(14, GTMThings.id("block/machine/part/energy_hatch.output")))
+            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+            .overlayTieredHullModel(GTmm.id("block/machine/part/energy_output_hatch"))
             .abilities(PartAbility.OUTPUT_ENERGY)
-            .compassNode("energy_hatch")
             .tier(14)
             .register();
     public static MachineDefinition ADAPTIVE_NET_LASER_INPUT_HATCH = AHRegistration.registrate.machine(
-            "adaptive_net_laser_target_hatch", holder -> new AdaptiveNetLaserHatchPartMachine(holder, IO.IN))
+            "adaptive_net_laser_target_hatch", holder -> new AdaptiveNetEnergyHatchPartMachine(holder, IO.IN,true))
             .rotationState(RotationState.ALL)
-            .renderer(() -> new OverlayTieredMachineRenderer(14, GTMThings.id("block/machine/part/laser_hatch.target")))
+            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+            .overlayTieredHullModel(GTmm.id("block/machine/part/laser_target_hatch"))
             .abilities(PartAbility.INPUT_LASER)
-            .compassNode("energy_hatch")
             .tier(14)
             .register();
     public static MachineDefinition ADAPTIVE_NET_LASER_OUTPUT_HATCH = AHRegistration.registrate.machine(
-            "adaptive_net_laser_source_hatch", holder -> new AdaptiveNetLaserHatchPartMachine(holder, IO.OUT))
+            "adaptive_net_laser_source_hatch", holder -> new AdaptiveNetEnergyHatchPartMachine(holder, IO.OUT,true))
             .rotationState(RotationState.ALL)
-            .renderer(() -> new OverlayTieredMachineRenderer(14, GTMThings.id("block/machine/part/laser_hatch.target")))
+            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+            .overlayTieredHullModel(GTmm.id("block/machine/part/laser_target_hatch"))
             .abilities(PartAbility.OUTPUT_LASER)
-            .compassNode("energy_hatch")
             .tier(14)
             .register();
     public static MachineDefinition ADAPTIVE_NET_ENERGY_TERMINAL = AHRegistration.registrate.machine(
             "adaptive_net_energy_terminal", AdaptiveNetEnergyTerminal::new)
             .rotationState(RotationState.NON_Y_AXIS)
-            .renderer(() -> new WorkableTieredHullMachineRenderer(14, GTMThings.id("block/machines/wireless_energy_monitor")))
-            .compassNodeSelf()
+            .workableTieredHullModel(GTmm.id("block/machines/wireless_monitor"))
             .tier(14)
             .register();
     // endregion
@@ -223,14 +220,16 @@ public class AHMachines {
     public static MachineDefinition[] registerConfigurableItemBuses(String name, IO io, int slots,
                                                                     int[] tiers, PartAbility... abilities) {
         var multi = (slots == 1 ? "" : "_%dx".formatted(slots));
-        var renderPath = "block/machine/part/item_bus." + (io == IO.IN ? "import" : "export");
+        final ResourceLocation overlay = GTCEu.id("block/overlay/machine/"+ (io == IO.IN? OVERLAY_ITEM_HATCH_INPUT:OVERLAY_ITEM_HATCH_OUTPUT));
+        final ResourceLocation pipeOverlay = GTCEu.id("block/overlay/machine/overlay_pipe");
+        final ResourceLocation emissiveOverlay = GTCEu.id("block/overlay/machine/"+ (io == IO.IN? "overlay_pipe_in_emissive":"overlay_pipe_out_emissive"));
         return registerTieredMachines(name + (io == IO.IN ? "_input" : "_output") + multi,
                 (holder, tier) -> new ConfigurableItemBusPartMachine(holder, tier, io, slots),
                 (tier, builder) -> {
                     builder.rotationState(RotationState.ALL)
-                            .renderer(() -> new OverlayTieredMachineRenderer(tier, GTCEu.id(renderPath)))
+                            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+                            .colorOverlayTieredHullModel(overlay, pipeOverlay, emissiveOverlay)
                             .abilities(abilities)
-                            .compassNode("item_bus")
                             .tooltipBuilder(
                                     (itemStack, components) -> {
                                         if (tier == MAX && slots == 16) {
@@ -252,18 +251,26 @@ public class AHMachines {
                 }, tiers);
     }
 
-    public static MachineDefinition[] registerConfigurableFluidHatches(String name, IO io, long initialCapacity, int slots,
+    public static MachineDefinition[] registerConfigurableFluidHatches(String name, IO io, int initialCapacity, int slots,
                                                                        int[] tiers, PartAbility... abilities) {
         var multi = (slots == 1 ? "" : "_%dx".formatted(slots));
-        var render_multi = (slots == 1 ? "" : slots == 8 ? "_4x" : slots == 16 ? "_9x" : "_%dx".formatted(slots));
-        var renderPath = "block/machine/part/fluid_hatch." + (io == IO.IN ? "import" : "export") + render_multi;
+        final ResourceLocation overlay = GTCEu.id("block/overlay/machine/"+ (io == IO.IN? OVERLAY_FLUID_HATCH_INPUT:OVERLAY_FLUID_HATCH_OUTPUT));
+        final ResourceLocation pipeOverlay;
+        if (slots >= 9) {
+            pipeOverlay = GTCEu.id("block/overlay/machine/overlay_pipe_9x");
+        } else if (slots >= 4) {
+            pipeOverlay = GTCEu.id("block/overlay/machine/overlay_pipe_4x");
+        } else {
+            pipeOverlay = null;
+        }
+        final ResourceLocation emissiveOverlay = GTCEu.id("block/overlay/machine/"+ (io == IO.IN? "overlay_pipe_in_emissive":"overlay_pipe_out_emissive"));
         return registerTieredMachines(name + (io == IO.IN ? "_input" : "_output") + multi,
                 (holder, tier) -> new ConfigurableFluidHatchPartMachine(holder, tier, io, initialCapacity, slots),
                 (tier, builder) -> {
                     builder.rotationState(RotationState.ALL)
-                            .renderer(() -> new OverlayTieredMachineRenderer(tier, GTCEu.id(renderPath)))
+                            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+                            .colorOverlayTieredHullModel(overlay,pipeOverlay, emissiveOverlay)
                             .abilities(abilities)
-                            .compassNode("fluid_hatch")
                             .tooltipBuilder(
                                     (itemStack, components) -> {
                                         if (tier == MAX && slots == 16) {
@@ -287,7 +294,7 @@ public class AHMachines {
                 tiers);
     }
 
-    public static MachineDefinition[] registerConfigurableDualHatches(String name, IO io, int page, long initialCapacity,
+    public static MachineDefinition[] registerConfigurableDualHatches(String name, IO io, int page, int initialCapacity,
                                                                       int[] tiers, PartAbility... abilities) {
         var multi = (page == 1 ? "" : "_%dp".formatted(page));
         var renderPath = "block/machine/part/dual_hatch." + (io == IO.IN ? "import" : "export");
@@ -295,9 +302,9 @@ public class AHMachines {
                 (holder, tier) -> new ConfigurableDualHatchPartMachine(holder, tier, io, page, initialCapacity),
                 (tier, builder) -> {
                     builder.rotationState(RotationState.ALL)
-                            .renderer(() -> new OverlayTieredMachineRenderer(tier, GTCEu.id(renderPath)))
+                            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+                            .workableTieredHullModel(GTCEu.id(renderPath))
                             .abilities(abilities)
-                            .compassNodeSelf()
                             .tooltipBuilder(
                                     (itemStack, components) -> {
                                         if (tier == MAX && page == 16) {
@@ -327,16 +334,16 @@ public class AHMachines {
         var name = io == IO.IN ? "input" : "output";
         String finalRender = getRender(amperage);
         MachineDefinition[] energyHatches = registerTieredMachines(amperage + "a_net_energy_" + name + "_hatch",
-                (holder, tier) -> new NetEnergyHatchPartMachine(holder, tier, io, amperage),
-                (tier, builder) -> builder.langValue(VNF[tier] + (io == IO.IN ? " Energy Hatch" : " Dynamo Hatch"))
+                (holder, tier) -> new NetEnergyHatchPartMachine(holder, tier, io, amperage,false),
+                (tier, builder) -> builder
+                        .langValue(VNF[tier] + (io == IO.IN ? " Energy Hatch" : " Dynamo Hatch"))
                         .rotationState(RotationState.ALL)
                         .abilities(ability)
                         .tooltips(Component.translatable(GTMAdvancedHatch.MODID + ".machine.net_energy_hatch." + name + ".tooltip"),
-                                Component.translatable(GTMThings.MOD_ID + ".machine.energy_hatch." + name + ".tooltip"),
-                                Component.translatable(GTMThings.MOD_ID + ".machine.wireless_energy_hatch." + name + ".tooltip"))
-                        .renderer(() -> new OverlayTieredMachineRenderer(tier, GTMThings.id("block/machine/part/" + finalRender)))
-                        // .overlayTieredHullRenderer(finalRender)
-                        .compassNode("energy_hatch")
+                                Component.translatable(GTmm.MOD_ID + ".machine.energy_hatch." + name + ".tooltip"),
+                                Component.translatable(GTmm.MOD_ID + ".machine.wireless_energy_hatch." + name + ".tooltip"))
+                        .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+                        .overlayTieredHullModel(GTmm.id("block/machine/part/" + finalRender))
                         .register(),
                 tiers);
         if (io == IO.IN) {
@@ -351,12 +358,12 @@ public class AHMachines {
         var name = io == IO.IN ? "target" : "source";
         String finalRender = getRender(amperage);
         MachineDefinition[] laserHatches = registerTieredMachines(amperage + "a_net_laser_" + name + "_hatch",
-                (holder, tier) -> new NetLaserHatchPartMachine(holder, tier, io, amperage), (tier, builder) -> {
+                (holder, tier) -> new NetEnergyHatchPartMachine(holder, tier, io, amperage,true), (tier, builder) -> {
                     MachineBuilder<MachineDefinition> machineBuilder = builder.langValue(VNF[tier] + " " + FormattingUtil.formatNumbers(amperage) + "A Laser " + FormattingUtil.toEnglishName(name) + " Hatch")
                             .rotationState(RotationState.ALL)
                             .abilities(ability)
-                            .renderer(() -> new OverlayTieredMachineRenderer(tier, GTMThings.id("block/machine/part/" + finalRender)))
-                            .compassNode("laser_hatch." + name)
+                            .overlayTieredHullModel(GTmm.id("block/machine/part/" + finalRender))
+                            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
                             /* 彩色滚动字参考这里 */
                             .tooltipBuilder(
                                     (itemStack, components) -> {
@@ -367,8 +374,8 @@ public class AHMachines {
                                         }
                                         components.addAll(List.of(
                                                 Component.translatable(GTMAdvancedHatch.MODID + ".machine.net_energy_hatch." + name + ".tooltip"),
-                                                Component.translatable(GTMThings.MOD_ID + ".machine.energy_hatch." + name + ".tooltip"),
-                                                Component.translatable(GTMThings.MOD_ID + ".machine.wireless_energy_hatch." + name + ".tooltip")));
+                                                Component.translatable(GTmm.MOD_ID + ".machine.energy_hatch." + name + ".tooltip"),
+                                                Component.translatable(GTmm.MOD_ID + ".machine.wireless_energy_hatch." + name + ".tooltip")));
                                         if (amperage >= 16777216 && !LDLib.isModLoaded("gtlcore") && AHConfig.INSTANCE.isDisplayNoFixCrashWarning)
                                             components.add(Component.translatable(GTMAdvancedHatch.MODID + ".machine.no_fix_crash_warning.tooltip"));
                                     });

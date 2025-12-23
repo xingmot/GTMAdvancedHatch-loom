@@ -1,5 +1,6 @@
 package com.xingmot.gtmadvancedhatch.api.gui;
 
+import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
 import com.xingmot.gtmadvancedhatch.api.ConfigNotifiableItemStack;
 import com.xingmot.gtmadvancedhatch.api.IConfigTransfer;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
@@ -7,8 +8,6 @@ import com.xingmot.gtmadvancedhatch.util.AHFormattingUtil;
 import com.xingmot.gtmadvancedhatch.util.AHUtil;
 
 import com.lowdragmc.lowdraglib.gui.util.DrawerHelper;
-import com.lowdragmc.lowdraglib.gui.widget.SlotWidget;
-import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
 import com.lowdragmc.lowdraglib.side.item.IItemTransfer;
 import com.lowdragmc.lowdraglib.utils.Position;
 import com.lowdragmc.lowdraglib.utils.Size;
@@ -36,6 +35,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 // 超堆叠 + 过滤时半透明影子
@@ -43,7 +43,7 @@ public class ConfigSlotWidget extends SlotWidget {
 
     @Nullable
     ItemStack currentJEIRenderedIngredient;
-    IConfigTransfer<ItemStackTransfer, ItemStack, ItemStack> icItemTransfer;
+    IConfigTransfer<ItemStackHandler, ItemStack, ItemStack> icItemTransfer;
     public int slot;
     public int lastSlotCapacity;
 
@@ -52,7 +52,7 @@ public class ConfigSlotWidget extends SlotWidget {
         return new ConfigWidgetSlotItemTransfer(itemHandler, index, 0, 0);
     }
 
-    public ConfigSlotWidget(IConfigTransfer<ItemStackTransfer, ItemStack, ItemStack> icItemTransfer, IItemTransfer itemHandler, int slotIndex, int xPosition, int yPosition,
+    public ConfigSlotWidget(IConfigTransfer<ItemStackHandler, ItemStack, ItemStack> icItemTransfer, ItemStackHandler itemHandler, int slotIndex, int xPosition, int yPosition,
                             boolean canTakeItems, boolean canPutItems) {
         super(itemHandler, slotIndex, xPosition, yPosition, canTakeItems, canPutItems);
         this.icItemTransfer = icItemTransfer;

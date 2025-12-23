@@ -16,7 +16,7 @@ public class AHConfig {
     public static void init() {
         synchronized (lock) {
             if (INSTANCE == null) {
-                INSTANCE = Configuration.registerConfig(AHConfig.class, ConfigFormats.yaml()).getConfigInstance();
+                INSTANCE = Configuration.registerConfig(AHConfig.class, ConfigFormats.YAML).getConfigInstance();
             }
         }
     }

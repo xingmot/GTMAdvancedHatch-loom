@@ -11,7 +11,6 @@ import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.IMachineLife;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDistinctPart;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredIOPartMachine;
-import com.gregtechceu.gtceu.api.machine.trait.ItemHandlerProxyRecipeTrait;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 
 import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
@@ -34,7 +33,6 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -63,7 +61,6 @@ public class LockItemOutputBus extends TieredIOPartMachine implements IDistinctP
     protected ISubscription trueInventorySubs;
     @Nullable
     protected TickableSubscription autoIOSubs;
-    private int oldUpdateStorage = -1;
 
     public LockItemOutputBus(IMachineBlockEntity holder, int tier, Object... args) {
         super(holder, tier, IO.OUT);
@@ -110,10 +107,6 @@ public class LockItemOutputBus extends TieredIOPartMachine implements IDistinctP
                 return isEmpty;
             }
         };
-    }
-
-    protected ItemHandlerProxyRecipeTrait createCombinedItemHandler(Object... args) {
-        return new ItemHandlerProxyRecipeTrait(this, Set.of(getOuterInventory()), IO.NONE, IO.NONE);
     }
 
     @Override
@@ -185,18 +178,16 @@ public class LockItemOutputBus extends TieredIOPartMachine implements IDistinctP
     protected void autoIO() {
         if (getOffsetTimer() % 5 == 0) {
             if (isWorkingEnabled()) {
-                exportToNearby(getInventory(), getFrontFacing());
+                if (io == IO.OUT) {
+                    getInventory().exportToNearby(getFrontFacing());
+                } else if (io == IO.IN) {
+                    getInventory().importFromNearby(getFrontFacing());
+                } else if (io == IO.BOTH) {
+                    getInventory().importFromNearby(getFrontFacing());
+                    getInventory().exportToNearby(getFrontFacing().getOpposite());
+                }
             }
-            updateAutoIO();
-        }
-    }
-
-    public void exportToNearby(NotifiableItemStackHandler handler, Direction... facings) {
-        if (handler.isEmpty()) return;
-        var level = handler.getMachine().getLevel();
-        var pos = handler.getMachine().getPos();
-        for (Direction facing : facings) {
-            ItemTransferHelperImpl.exportToTarget(handler, Integer.MAX_VALUE, handler.getMachine().getItemCapFilter(facing), level, pos.relative(facing), facing.getOpposite());
+            updateInventorySubscription();
         }
     }
 
@@ -235,7 +226,6 @@ public class LockItemOutputBus extends TieredIOPartMachine implements IDistinctP
             // String s = String.format("内存的 [%s] 进行更新，分别是 [%s] 个", String.join(",", changedSlots), String.join(",",
             // changedSlotsCount));
             // GTMAdvancedHatch.LOGGER.info(s);
-            oldUpdateStorage = 0;
             getOuterInventory().notifyListeners();
         }
         // GTMAdvancedHatch.LOGGER.info(String.format("registed map: %s",

@@ -1,7 +1,10 @@
 package com.xingmot.gtmadvancedhatch.common.machines;
 
-import com.xingmot.gtmadvancedhatch.api.IBatchable;
-import com.xingmot.gtmadvancedhatch.api.NoConsumeNotifiabbleEnergyContainer;
+import cn.qiuye.gtmoremachine.api.misc.wireless.energy.WirelessEnergyContainer;
+import cn.qiuye.gtmoremachine.common.machine.multiblock.part.WirelessEnergyHatchPartMachine;
+import cn.qiuye.gtmoremachine.utils.TeamUtils;
+import com.xingmot.gtmadvancedhatch.api.IMutableBind;
+import com.xingmot.gtmadvancedhatch.api.NoConsumeNotifiableEnergyContainer;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
@@ -12,6 +15,7 @@ import com.gregtechceu.gtceu.common.data.GTItems;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -25,20 +29,22 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-import com.hepdd.gtmthings.api.misc.WirelessEnergyManager;
-import com.hepdd.gtmthings.common.block.machine.multiblock.part.WirelessEnergyHatchPartMachine;
-import com.hepdd.gtmthings.utils.TeamUtil;
 import org.jetbrains.annotations.Nullable;
 
-public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine implements IBatchable {
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.UUID;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine implements IMutableBind {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(NetEnergyHatchPartMachine.class, WirelessEnergyHatchPartMachine.MANAGED_FIELD_HOLDER);
     private TickableSubscription updEnergySubs;
     @Persisted
     public boolean isBatchEnable;
 
-    public NetEnergyHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, int amperage, Object... args) {
-        super(holder, tier, io, amperage, args);
+    public NetEnergyHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, int amperage,boolean isLaser, Object... args) {
+        super(holder, tier, io, amperage, isLaser, args);
     }
 
     @Override
@@ -47,46 +53,46 @@ public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine im
     }
 
     @Override
-    protected NoConsumeNotifiabbleEnergyContainer createEnergyContainer(Object... args) {
-        NoConsumeNotifiabbleEnergyContainer container;
+    protected NoConsumeNotifiableEnergyContainer createEnergyContainer(Object... args) {
+        NoConsumeNotifiableEnergyContainer container;
         if (this.io == IO.OUT) {
-            container = NoConsumeNotifiabbleEnergyContainer.emitterContainer(this, GTValues.V[this.tier] * 64L * (long) this.amperage, GTValues.V[this.tier], (long) this.amperage);
+            container = NoConsumeNotifiableEnergyContainer.emitterContainer(this, GTValues.V[this.tier] * 64L * (long) this.amperage, GTValues.V[this.tier], (long) this.amperage);
         } else {
-            container = NoConsumeNotifiabbleEnergyContainer.receiverContainer(this, GTValues.V[this.tier] * 16L * (long) this.amperage, GTValues.V[this.tier], (long) this.amperage);
+            container = NoConsumeNotifiableEnergyContainer.receiverContainer(this, GTValues.V[this.tier] * 16L * (long) this.amperage, GTValues.V[this.tier], (long) this.amperage);
         }
 
         return container;
     }
 
     // 配方会默认直接拉电网，但这两个方法仍然可以兜底
-    private void useEnergy() {
-        long currentStored = this.energyContainer.getEnergyStored();
-        long maxStored = this.energyContainer.getEnergyCapacity();
-        long changeStored = Math.min(maxStored - currentStored, this.energyContainer.getInputVoltage() * this.energyContainer.getInputAmperage());
-        if (currentStored != maxStored && WirelessEnergyManager.addEUToGlobalEnergyMap(this.owner_uuid, -changeStored, this)) {
-            this.energyContainer.setEnergyStored(maxStored);
+    private void updateEnergy() {
+        if (this.getUUID() == null) return;
+        if (io == IO.IN) {
+            useEnergy();
+        } else {
+            addEnergy();
         }
+    }
+
+    private void useEnergy() {
+        var currentStored = energyContainer.getEnergyStored();
+        var maxStored = energyContainer.getEnergyCapacity();
+        var changeStored = Math.min(maxStored - currentStored, energyContainer.getInputVoltage() * energyContainer.getInputAmperage());
+        if (changeStored <= 0) return;
+        WirelessEnergyContainer container = getWirelessEnergyContainer();
+        if (container == null) return;
+        changeStored = container.removeEnergy(changeStored, this);
+        if (changeStored > 0) energyContainer.setEnergyStored(currentStored + changeStored);
     }
 
     private void addEnergy() {
-        long currentStored = this.energyContainer.getEnergyStored();
-        if (currentStored != 0L) {
-            WirelessEnergyManager.addEUToGlobalEnergyMap(this.owner_uuid, currentStored, this);
-            this.energyContainer.setEnergyStored(0L);
-        }
-    }
-
-    private void updateEnergy() {
-        if (super.owner_uuid != null) {
-            if (((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid == null) {
-                ((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid = this.owner_uuid;
-            }
-            if (this.io == IO.IN) {
-                this.useEnergy();
-            } else {
-                this.addEnergy();
-            }
-        }
+        var currentStored = energyContainer.getEnergyStored();
+        if (currentStored <= 0) return;
+        var changeStored = Math.min(energyContainer.getOutputVoltage() * energyContainer.getOutputAmperage(), currentStored);
+        WirelessEnergyContainer container = getWirelessEnergyContainer();
+        if (container == null) return;
+        changeStored = container.addEnergy(changeStored, this);
+        if (changeStored > 0) energyContainer.setEnergyStored(currentStored - changeStored);
     }
 
     //////////////////////////////////////
@@ -102,10 +108,10 @@ public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine im
         if (is.isEmpty()) {
             return InteractionResult.PASS;
         } else if (is.is(GTItems.TOOL_DATA_STICK.asItem())) {
-            this.owner_uuid = player.getUUID();
-            ((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid = player.getUUID();
-            if (this.getLevel().isClientSide()) {
-                player.sendSystemMessage(Component.translatable("gtmthings.machine.wireless_energy_hatch.tooltip.bind", new Object[] { TeamUtil.GetName(player) }));
+            setOwnerUUID(player.getUUID());
+            ((NoConsumeNotifiableEnergyContainer) this.energyContainer).owner_uuid = player.getUUID();
+            if (this.getLevel()!=null&&this.getLevel().isClientSide()) {
+                player.sendSystemMessage(Component.translatable("gtmoremachine.machine.wireless_energy_hatch.tooltip.bind", TeamUtils.getName(player)));
             }
             this.updateEnergySubscription();
             return InteractionResult.SUCCESS;
@@ -124,10 +130,10 @@ public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine im
         if (is.isEmpty()) {
             return false;
         } else if (is.is(GTItems.TOOL_DATA_STICK.asItem())) {
-            this.owner_uuid = null;
-            ((NoConsumeNotifiabbleEnergyContainer) this.energyContainer).owner_uuid = null;
-            if (this.getLevel().isClientSide()) {
-                player.sendSystemMessage(Component.translatable("gtmthings.machine.wireless_energy_hatch.tooltip.unbind"));
+            setOwnerUUID(null);
+            ((NoConsumeNotifiableEnergyContainer) this.energyContainer).owner_uuid = null;
+            if (this.getLevel()!=null&&this.getLevel().isClientSide()) {
+                player.sendSystemMessage(Component.translatable("gtmoremachine.machine.wireless_energy_hatch.tooltip.unbind"));
             }
 
             this.updateEnergySubscription();
@@ -139,14 +145,14 @@ public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine im
 
     public void onMachinePlaced(@Nullable LivingEntity placer, ItemStack stack) {
         if (placer instanceof Player player) {
-            this.owner_uuid = player.getUUID();
-            ((NoConsumeNotifiabbleEnergyContainer) energyContainer).setOwner_uuid(player.getUUID());
+            setOwnerUUID(player.getUUID());
+            ((NoConsumeNotifiableEnergyContainer) energyContainer).setOwner_uuid(player.getUUID());
             this.updateEnergySubscription();
         }
     }
 
     private void updateEnergySubscription() {
-        if (super.owner_uuid != null) {
+        if (this.getOwnerUUID() != null) {
             this.updEnergySubs = this.subscribeServerTick(this.updEnergySubs, this::updateEnergy);
         } else if (this.updEnergySubs != null) {
             this.updEnergySubs.unsubscribe();
@@ -159,12 +165,7 @@ public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine im
     }
 
     @Override
-    public boolean isBatchEnable() {
-        return this.isBatchEnable;
-    }
-
-    @Override
-    public void setBatchEnable(boolean isBatchEnable) {
-        this.isBatchEnable = isBatchEnable;
+    public void setUUID(UUID uuid) {
+        this.setOwnerUUID(uuid);
     }
 }

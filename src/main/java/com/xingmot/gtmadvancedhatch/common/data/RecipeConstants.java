@@ -89,7 +89,7 @@ public class RecipeConstants {
             FLUID_REGULATOR_HV,
             FLUID_REGULATOR_EV,
             FLUID_REGULATOR_IV,
-            FLUID_REGULATOR_LUV,
+            FLUID_REGULATOR_LuV,
             FLUID_REGULATOR_ZPM,
             FLUID_REGULATOR_UV,
             FLUID_REGULATOR_UHV,
@@ -121,7 +121,7 @@ public class RecipeConstants {
             ELECTRIC_PISTON_HV,
             ELECTRIC_PISTON_EV,
             ELECTRIC_PISTON_IV,
-            ELECTRIC_PISTON_LUV, // 怎么大小写突然错了
+            ELECTRIC_PISTON_LuV,
             ELECTRIC_PISTON_ZPM,
             ELECTRIC_PISTON_UV,
             ELECTRIC_PISTON_UHV,

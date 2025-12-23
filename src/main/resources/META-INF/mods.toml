@@ -33,8 +33,8 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
-modId = "gtmthings"
+modId = "gtmoremachine"
 mandatory = true
-versionRange = "[${gtmthings_version},)"
+versionRange = "[${gtmm_version},)"
 ordering = "NONE"
 side = "BOTH"

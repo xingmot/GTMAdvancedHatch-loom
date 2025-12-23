@@ -1,15 +1,16 @@
 package com.xingmot.gtmadvancedhatch.api.gui;
 
+import com.gregtechceu.gtceu.api.gui.widget.TankWidget;
+import com.gregtechceu.gtceu.api.transfer.fluid.CustomFluidTank;
+import com.gregtechceu.gtceu.client.TooltipsHandler;
+import com.lowdragmc.lowdraglib.side.fluid.FluidHelper;
+import com.lowdragmc.lowdraglib.side.fluid.forge.FluidHelperImpl;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
 import com.xingmot.gtmadvancedhatch.util.AHFormattingUtil;
 import com.xingmot.gtmadvancedhatch.util.AHUtil;
 
 import com.lowdragmc.lowdraglib.Platform;
 import com.lowdragmc.lowdraglib.gui.util.DrawerHelper;
-import com.lowdragmc.lowdraglib.gui.widget.TankWidget;
-import com.lowdragmc.lowdraglib.side.fluid.FluidHelper;
-import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
-import com.lowdragmc.lowdraglib.side.fluid.IFluidStorage;
 import com.lowdragmc.lowdraglib.utils.Position;
 import com.lowdragmc.lowdraglib.utils.Size;
 
@@ -29,12 +30,13 @@ import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
+import net.minecraftforge.fluids.FluidStack;
 
 public class HugeTankWidget extends TankWidget {
 
     FluidStack currentJEIRenderedIngredient;
 
-    public HugeTankWidget(IFluidStorage fluidTank, int x, int y, boolean allowClickContainerFilling, boolean allowClickContainerEmptying) {
+    public HugeTankWidget(CustomFluidTank fluidTank, int x, int y, boolean allowClickContainerFilling, boolean allowClickContainerEmptying) {
         super(fluidTank, x, y, allowClickContainerFilling, allowClickContainerEmptying);
     }
 
@@ -72,15 +74,14 @@ public class HugeTankWidget extends TankWidget {
         FluidStack fluidStack = this.currentJEIRenderedIngredient != null ? this.currentJEIRenderedIngredient : this.lastFluidInTank;
         if (fluidStack != null && !fluidStack.isEmpty()) {
             Pair<String, ChatFormatting> progressAndColor = AHUtil.getCapacityProgressAndColor(fluidStack.getAmount(), lastTankCapacity, this.allowClickDrained);
-            tooltips.add(Component.literal("").append(FluidHelper.getDisplayName(fluidStack))
+            tooltips.add(Component.literal("").append(fluidStack.getDisplayName())
                     .append(Component.literal(progressAndColor.getFirst()).withStyle(progressAndColor.getSecond())));
             if (!isShiftDown() && (fluidStack.getAmount() > min || this.lastTankCapacity > min)) {
                 tooltips.add(Component.translatable("ldlib.fluid.amount", AHFormattingUtil.formatLongBucketsToShort(fluidStack.getAmount(), min), AHFormattingUtil.formatLongBucketsToShort(this.lastTankCapacity, min)));
                 if (!Platform.isForge()) {
                     tooltips.add(Component.literal("§6mB:§r %d/%d".formatted(fluidStack.getAmount() * 1000L / FluidHelper.getBucket(), this.lastTankCapacity * 1000L / FluidHelper.getBucket())).append(" mB"));
                 }
-                tooltips.add(Component.translatable("ldlib.fluid.temperature", FluidHelper.getTemperature(fluidStack)));
-                tooltips.add(FluidHelper.isLighterThanAir(fluidStack) ? Component.translatable("ldlib.fluid.state_gas") : Component.translatable("ldlib.fluid.state_liquid"));
+                TooltipsHandler.appendFluidTooltips(fluidStack, tooltips::add, null);
                 tooltips.add(Component.translatable("gtmadvancedhatch.gui.clear_content.tooltips").withStyle(ChatFormatting.GOLD));
                 tooltips.add(Component.translatable("gtmadvancedhatch.gui.shift_expand_tooltips").withStyle(ChatFormatting.DARK_GRAY));
             } else {
@@ -88,8 +89,7 @@ public class HugeTankWidget extends TankWidget {
                 if (!Platform.isForge()) {
                     tooltips.add(Component.literal("§6mB:§r %d/%d".formatted(fluidStack.getAmount() * 1000L / FluidHelper.getBucket(), this.lastTankCapacity * 1000L / FluidHelper.getBucket())).append(" mB"));
                 }
-                tooltips.add(Component.translatable("ldlib.fluid.temperature", FluidHelper.getTemperature(fluidStack)));
-                tooltips.add(FluidHelper.isLighterThanAir(fluidStack) ? Component.translatable("ldlib.fluid.state_gas") : Component.translatable("ldlib.fluid.state_liquid"));
+                TooltipsHandler.appendFluidTooltips(fluidStack, tooltips::add, null);
                 tooltips.add(Component.translatable("gtmadvancedhatch.gui.clear_content.tooltips").withStyle(ChatFormatting.GOLD));
             }
         } else {
@@ -118,7 +118,7 @@ public class HugeTankWidget extends TankWidget {
         this.drawBackgroundTexture(graphics, mouseX, mouseY);
         if (this.isClientSideWidget && this.fluidTank != null) {
             FluidStack fluidStack = this.fluidTank.getFluidInTank(this.tank);
-            long capacity = this.fluidTank.getTankCapacity(this.tank);
+            int capacity = this.fluidTank.getTankCapacity(this.tank);
             if (capacity != this.lastTankCapacity) {
                 this.lastTankCapacity = capacity;
             }
@@ -145,7 +145,7 @@ public class HugeTankWidget extends TankWidget {
                 int height = size.height - 2;
                 int x = pos.x + 1;
                 int y = pos.y + 1;
-                DrawerHelper.drawFluidForGui(graphics, renderedFluid, renderedFluid.getAmount(), (int) ((float) x + drawnU * (float) width), (int) ((float) y + drawnV * (float) height), (int) ((float) width * drawnWidth), (int) ((float) height * drawnHeight));
+                DrawerHelper.drawFluidForGui(graphics, FluidHelperImpl.toFluidStack(renderedFluid), renderedFluid.getAmount(), (int) ((float) x + drawnU * (float) width), (int) ((float) y + drawnV * (float) height), (int) ((float) width * drawnWidth), (int) ((float) height * drawnHeight));
             }
 
             if (this.showAmount && !renderedFluid.isEmpty()) {

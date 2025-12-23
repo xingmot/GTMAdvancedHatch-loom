@@ -1,5 +1,9 @@
 package com.xingmot.gtmadvancedhatch.api.gui;
 
+import com.gregtechceu.gtceu.api.transfer.fluid.CustomFluidTank;
+import com.gregtechceu.gtceu.api.transfer.fluid.IFluidHandlerModifiable;
+import com.gregtechceu.gtceu.client.TooltipsHandler;
+import com.lowdragmc.lowdraglib.side.fluid.forge.FluidHelperImpl;
 import com.xingmot.gtmadvancedhatch.api.IConfigTransfer;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
 import com.xingmot.gtmadvancedhatch.util.AHFormattingUtil;
@@ -13,9 +17,7 @@ import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
 import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
 import com.lowdragmc.lowdraglib.gui.texture.ResourceTexture;
 import com.lowdragmc.lowdraglib.gui.util.DrawerHelper;
-import com.lowdragmc.lowdraglib.misc.FluidStorage;
 import com.lowdragmc.lowdraglib.side.fluid.FluidHelper;
-import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
 import com.lowdragmc.lowdraglib.side.fluid.FluidTransferHelper;
 import com.lowdragmc.lowdraglib.side.fluid.IFluidTransfer;
 import com.lowdragmc.lowdraglib.utils.ColorUtils;
@@ -43,6 +45,8 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 // TODO 翻页
@@ -58,7 +62,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
     @Setter
     private static IGuiTexture lockTexture = new GuiTextureGroup(new ResourceTexture("gtceu:textures/gui/widget/button_lock.png").scale(0.65F));
     @Setter
-    protected long maxCapacity;
+    protected int maxCapacity;
     /** 锁定滚动，每次打开gui时会自动锁定全部槽位 */
     @Setter
     protected boolean lockScroll = true;
@@ -67,11 +71,11 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
     protected boolean isWarned = false;
 
     @Getter
-    private IConfigTransfer<FluidStorage[], FluidStorage, FluidStack> icFluidTank;
+    private IConfigTransfer<CustomFluidTank[], CustomFluidTank, FluidStack> icFluidTank;
 
-    public PhantomFluidCapacityWidget(@Nonnull IConfigTransfer<FluidStorage[], FluidStorage, FluidStack> cTransfer, @Nonnull IFluidTransfer fluidTank, long currentCapacity, long maxCapacity, int tank, int x, int y, int width, int height) {
+    public PhantomFluidCapacityWidget(@Nonnull IConfigTransfer<CustomFluidTank[], CustomFluidTank, FluidStack> cTransfer, @Nonnull IFluidHandler fluidTank, int currentCapacity, int maxCapacity, int tank, int x, int y, int width, int height) {
         this(cTransfer, currentCapacity, maxCapacity, tank, x, y, width, height,
-                () -> cTransfer.getLockedRef()[tank].getFluid(),
+                () -> cTransfer.getLockedRef()[tank].getFluidInTank(0),
                 (f) -> {
                     if (f != null && !f.isEmpty()) {
                         if (fluidTank.getFluidInTank(tank).isEmpty() || fluidTank.getFluidInTank(tank).getFluid() == f.getFluid()) {
@@ -83,7 +87,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
                 });
     }
 
-    public PhantomFluidCapacityWidget(@Nonnull IConfigTransfer<FluidStorage[], FluidStorage, FluidStack> cTransfer, long currentCapacity, long maxCapacity, int tank, int x, int y, int width, int height, Supplier<FluidStack> phantomFluidGetter, Consumer<FluidStack> phantomFluidSetter) {
+    public PhantomFluidCapacityWidget(@Nonnull IConfigTransfer<CustomFluidTank[], CustomFluidTank, FluidStack> cTransfer, int currentCapacity, int maxCapacity, int tank, int x, int y, int width, int height, Supplier<FluidStack> phantomFluidGetter, Consumer<FluidStack> phantomFluidSetter) {
         super(cTransfer.getIndexLocked(tank), tank, x, y, width, height, phantomFluidGetter, phantomFluidSetter);
         this.icFluidTank = cTransfer;
         this.lastTankCapacity = currentCapacity;
@@ -93,12 +97,12 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
     }
 
     @Override
-    public long getAmount(int slot) {
+    public int getAmount(int slot) {
         return this.lastTankCapacity;
     }
 
     @Override
-    public void setAmount(int slot, long capacity) {
+    public void setAmount(int slot, int capacity) {
         this.lastTankCapacity = capacity;
     }
 
@@ -167,7 +171,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
     @Override
     public void handleClientAction(int id, FriendlyByteBuf buffer) {
         switch (id) {
-            case MachinesConstants.SCROLL_ACTION_ID -> this.handleScrollAction(buffer.readLong());
+            case MachinesConstants.SCROLL_ACTION_ID -> this.handleScrollAction(buffer.readInt());
             case MachinesConstants.MOUSE_LEFT_CLICK_ACTION_ID -> this.handlePhantomClick();
             case MachinesConstants.MOUSE_MIDDLE_CLICK_ACTION_ID -> this.handleMiddleClick(buffer.readBoolean());
             case 2 -> super.handleClientAction(2, buffer); // 不要动父类的流体设置方法
@@ -178,7 +182,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
     }
 
     @OnlyIn(Dist.DEDICATED_SERVER)
-    private void handleScrollAction(long newAmount) {
+    private void handleScrollAction(int newAmount) {
         if (this.getFluidTank() != null)
             if (icFluidTank.isTruncate(this.tank, newAmount) && !isWarned) {
                 setWarnedAndWrite(true);
@@ -234,13 +238,13 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
             itemStack.setCount(1);
             IFluidTransfer handler = FluidTransferHelper.getFluidTransfer(this.gui.entityPlayer, this.gui.getModularUIContainer());
             if (handler != null) {
-                FluidStack resultFluid = handler.drain(2147483647L, true);
+                FluidStack resultFluid = FluidHelperImpl.toFluidStack(handler.drain(2147483647L, true));
                 if (this.phantomFluidSetter != null) {
                     this.phantomFluidSetter.accept(resultFluid);
                 }
             }
         } else if (this.phantomFluidSetter != null) {
-            this.phantomFluidSetter.accept(FluidStack.empty());
+            this.phantomFluidSetter.accept(FluidStack.EMPTY);
         }
     }
 
@@ -251,7 +255,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
         this.drawBackgroundTexture(graphics, 0, 0);
         if (isClientSideWidget && fluidTank != null) {
             FluidStack fluidStack = fluidTank.getFluidInTank(tank);
-            long capacity = fluidTank.getTankCapacity(tank);
+            int capacity = fluidTank.getTankCapacity(tank);
             if (capacity != getAmount(-1)) {
                 setAmount(-1, capacity);
             }
@@ -274,7 +278,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
             int height = size.height - 2;
             int x = pos.x + 1;
             int y = pos.y + 1;
-            DrawerHelper.drawFluidForGui(graphics, lastFluidInTank, lastFluidInTank.getAmount(),
+            DrawerHelper.drawFluidForGui(graphics, FluidHelperImpl.toFluidStack(lastFluidInTank), lastFluidInTank.getAmount(),
                     (int) (x + drawnU * width), (int) (y + drawnV * height), ((int) (width * drawnWidth)), ((int) (height * drawnHeight)));
         }
         drawOverlay(graphics, mouseX, mouseY, partialTicks);
@@ -321,14 +325,13 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
         ArrayList<Component> tooltips = new ArrayList<>();
         FluidStack fluidStack = this.currentJEIRenderedIngredient != null ? this.currentJEIRenderedIngredient : this.lastFluidInTank;
         if (fluidStack != null && !fluidStack.isEmpty()) {
-            tooltips.add(FluidHelper.getDisplayName(fluidStack));
+            tooltips.add(fluidStack.getDisplayName());
             if (!isShiftDown() && (fluidStack.getAmount() > min || getAmount(-1) > min)) {
                 tooltips.add(Component.translatable("ldlib.fluid.amount", AHFormattingUtil.formatLongBucketsToShort(fluidStack.getAmount(), min), AHFormattingUtil.formatLongBucketsToShort(getAmount(-1), min)));
                 if (!Platform.isForge()) {
                     tooltips.add(Component.literal("§6mB:§r %d/%d".formatted(fluidStack.getAmount() * 1000L / FluidHelper.getBucket(), getAmount(-1) * 1000L / FluidHelper.getBucket())).append(" mB"));
                 }
-                tooltips.add(Component.translatable("ldlib.fluid.temperature", FluidHelper.getTemperature(fluidStack)));
-                tooltips.add(FluidHelper.isLighterThanAir(fluidStack) ? Component.translatable("ldlib.fluid.state_gas") : Component.translatable("ldlib.fluid.state_liquid"));
+                TooltipsHandler.appendFluidTooltips(fluidStack, tooltips::add, null);
                 if (getAmount(-1) != 0)
                     tooltips.add(Component.translatable("gtmadvancedhatch.gui.clear_phantom_capacity.tooltips").withStyle(ChatFormatting.GOLD));
                 tooltips.add(Component.translatable("gtmadvancedhatch.gui.shift_expand_tooltips").withStyle(ChatFormatting.DARK_GRAY));
@@ -337,8 +340,7 @@ public class PhantomFluidCapacityWidget extends ScrollablePhantomFluidWidget imp
                 if (!Platform.isForge()) {
                     tooltips.add(Component.literal("§6mB:§r %d/%d".formatted(fluidStack.getAmount() * 1000L / FluidHelper.getBucket(), getAmount(-1) * 1000L / FluidHelper.getBucket())).append(" mB"));
                 }
-                tooltips.add(Component.translatable("ldlib.fluid.temperature", FluidHelper.getTemperature(fluidStack)));
-                tooltips.add(FluidHelper.isLighterThanAir(fluidStack) ? Component.translatable("ldlib.fluid.state_gas") : Component.translatable("ldlib.fluid.state_liquid"));
+                TooltipsHandler.appendFluidTooltips(fluidStack, tooltips::add, null);
                 if (!isShiftDown() && getAmount(-1) != 0)
                     tooltips.add(Component.translatable("gtmadvancedhatch.gui.clear_phantom_capacity.tooltips").withStyle(ChatFormatting.GOLD));
             }

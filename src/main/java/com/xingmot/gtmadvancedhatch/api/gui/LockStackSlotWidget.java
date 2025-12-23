@@ -1,8 +1,9 @@
 package com.xingmot.gtmadvancedhatch.api.gui;
 
+import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
+import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 import com.lowdragmc.lowdraglib.gui.texture.GuiTextureGroup;
 import com.lowdragmc.lowdraglib.gui.texture.IGuiTexture;
-import com.lowdragmc.lowdraglib.gui.widget.SlotWidget;
 import com.lowdragmc.lowdraglib.side.item.IItemTransfer;
 import com.lowdragmc.lowdraglib.utils.Position;
 import com.lowdragmc.lowdraglib.utils.Size;
@@ -25,7 +26,7 @@ public class LockStackSlotWidget extends SlotWidget {
 
     protected IGuiTexture occupiedTexture;
 
-    public LockStackSlotWidget(IItemTransfer itemHandler, int slotIndex, int xPosition, int yPosition,
+    public LockStackSlotWidget(CustomItemStackHandler itemHandler, int slotIndex, int xPosition, int yPosition,
                                boolean canTakeItems, boolean canPutItems) {
         super(itemHandler, slotIndex, xPosition, yPosition, canTakeItems, canPutItems);
     }

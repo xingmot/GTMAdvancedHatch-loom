@@ -1,8 +1,7 @@
 package com.xingmot.gtmadvancedhatch.integration.gtlcore;
 
+import cn.qiuye.gtmoremachine.common.data.machines.WirelessMachines;
 import com.xingmot.gtmadvancedhatch.GTMAdvancedHatch;
-
-import org.gtlcore.gtlcore.common.data.GTLMachines;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.common.data.GTItems;
@@ -32,7 +31,7 @@ public class ExGTLRecipes {
             // region 262144A激光电网仓配方
             ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_laser_input_hatch_" + VN[tier].toLowerCase() + "_262144a"))
                     .outputItems(ExGTLMachines.NET_LASER_INPUT_HATCH_262144A[tier], 1)
-                    .inputItems(GTLMachines.WIRELESS_ENERGY_INPUT_HATCH_262144A[tier], 4)
+                    .inputItems(WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_262144A[tier], 4)
                     .inputItems(GTMachines.WORLD_ACCELERATOR[getTierWorldAccelerator(tier)], 1)
                     .inputItems(GTMachines.POWER_TRANSFORMER[getTierTransformer(tier)], 1)
                     .inputItems(GTItems.COVER_ENERGY_DETECTOR_ADVANCED, 1)
@@ -42,7 +41,7 @@ public class ExGTLRecipes {
                     .save(provider);
             ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_laser_output_hatch_" + VN[tier].toLowerCase() + "_262144a"))
                     .outputItems(ExGTLMachines.NET_LASER_OUTPUT_HATCH_262144A[tier], 1)
-                    .inputItems(GTLMachines.WIRELESS_ENERGY_OUTPUT_HATCH_262144A[tier], 4)
+                    .inputItems(WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_262144A[tier], 4)
                     .inputItems(GTMachines.WORLD_ACCELERATOR[getTierWorldAccelerator(tier)], 1)
                     .inputItems(GTMachines.POWER_TRANSFORMER[getTierTransformer(tier)], 1)
                     .inputItems(GTItems.COVER_ENERGY_DETECTOR_ADVANCED, 1)
@@ -54,7 +53,7 @@ public class ExGTLRecipes {
             // region 1048576A激光电网仓配方
             ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_laser_input_hatch_" + VN[tier].toLowerCase() + "_1048576a"))
                     .outputItems(ExGTLMachines.NET_LASER_INPUT_HATCH_1048576A[tier], 1)
-                    .inputItems(GTLMachines.WIRELESS_ENERGY_INPUT_HATCH_1048576A[tier], 4)
+                    .inputItems(WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_1048576A[tier], 4)
                     .inputItems(GTMachines.WORLD_ACCELERATOR[getTierWorldAccelerator(tier)], 1)
                     .inputItems(GTMachines.POWER_TRANSFORMER[getTierTransformer(tier)], 1)
                     .inputItems(GTItems.COVER_ENERGY_DETECTOR_ADVANCED, 1)
@@ -64,7 +63,7 @@ public class ExGTLRecipes {
                     .save(provider);
             ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_laser_output_hatch_" + VN[tier].toLowerCase() + "_1048576a"))
                     .outputItems(ExGTLMachines.NET_LASER_OUTPUT_HATCH_1048576A[tier], 1)
-                    .inputItems(GTLMachines.WIRELESS_ENERGY_OUTPUT_HATCH_1048576A[tier], 4)
+                    .inputItems(WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_1048576A[tier], 4)
                     .inputItems(GTMachines.WORLD_ACCELERATOR[getTierWorldAccelerator(tier)], 1)
                     .inputItems(GTMachines.POWER_TRANSFORMER[getTierTransformer(tier)], 1)
                     .inputItems(GTItems.COVER_ENERGY_DETECTOR_ADVANCED, 1)
@@ -76,7 +75,7 @@ public class ExGTLRecipes {
             // region 4194304A激光电网仓配方
             ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_laser_input_hatch_" + VN[tier].toLowerCase() + "_4194304a"))
                     .outputItems(ExGTLMachines.NET_ENERGY_INPUT_HATCH_4194304A[tier], 1)
-                    .inputItems(GTLMachines.WIRELESS_ENERGY_INPUT_HATCH_4194304A[tier], 4)
+                    .inputItems(WirelessMachines.WIRELESS_ENERGY_INPUT_HATCH_4194304A[tier], 4)
                     .inputItems(GTMachines.WORLD_ACCELERATOR[getTierWorldAccelerator(tier)], 1)
                     .inputItems(GTMachines.POWER_TRANSFORMER[getTierTransformer(tier)], 1)
                     .inputItems(GTItems.COVER_ENERGY_DETECTOR_ADVANCED, 1)
@@ -86,7 +85,7 @@ public class ExGTLRecipes {
                     .save(provider);
             ASSEMBLER_RECIPES.recipeBuilder(GTMAdvancedHatch.id("net_laser_output_hatch_" + VN[tier].toLowerCase() + "_4194304a"))
                     .outputItems(ExGTLMachines.NET_ENERGY_OUTPUT_HATCH_4194304A[tier], 1)
-                    .inputItems(GTLMachines.WIRELESS_ENERGY_OUTPUT_HATCH_4194304A[tier], 4)
+                    .inputItems(WirelessMachines.WIRELESS_ENERGY_OUTPUT_HATCH_4194304A[tier], 4)
                     .inputItems(GTMachines.WORLD_ACCELERATOR[getTierWorldAccelerator(tier)], 1)
                     .inputItems(GTMachines.POWER_TRANSFORMER[getTierTransformer(tier)], 1)
                     .inputItems(GTItems.COVER_ENERGY_DETECTOR_ADVANCED, 1)

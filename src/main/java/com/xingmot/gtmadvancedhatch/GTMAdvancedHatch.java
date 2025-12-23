@@ -37,6 +37,7 @@ public class GTMAdvancedHatch {
         return tryBuild(MODID, FormattingUtil.toLowerCaseUnder(name));
     }
 
+    @SuppressWarnings("removal")
     public GTMAdvancedHatch() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         AHRegistration.registrate.registerEventListeners(bus);

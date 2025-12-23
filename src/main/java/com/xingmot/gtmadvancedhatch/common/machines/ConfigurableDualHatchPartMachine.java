@@ -28,7 +28,6 @@ import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
-import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
 import com.lowdragmc.lowdraglib.side.fluid.FluidTransferHelper;
 import com.lowdragmc.lowdraglib.side.item.ItemTransferHelper;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
@@ -60,6 +59,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.xingmot.gtmadvancedhatch.common.machines.ConfigurableFluidHatchPartMachine.getTankCapacity;
 
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -74,7 +74,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
     @Persisted
     public final NotifiableFluidTank tank;
     @Persisted
-    public long maxTankCapacity;
+    public int maxTankCapacity;
     private final int slots;
     protected @Nullable ISubscription tankSubs;
     private boolean hasFluidTransfer;
@@ -82,7 +82,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
     public int page = 0;
     public int pages;
 
-    public ConfigurableDualHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, int pageMax, long initialCapacity, Object... args) {
+    public ConfigurableDualHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, int pageMax, int initialCapacity, Object... args) {
         super(holder, tier, io, 8 * pageMax, args);
         this.slots = 8 * pageMax;
         this.pages = pageMax;
@@ -101,7 +101,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
         }
     }
 
-    protected NotifiableFluidTank createTank(long initialCapacity, int slots, Object... args) {
+    protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
         if (this.maxTankCapacity == 0L)
             this.maxTankCapacity = getTankCapacity(initialCapacity, tier);
         ConfigNotifiableFluidTank fluidTank = new ConfigNotifiableFluidTank(this, slots, this.maxTankCapacity, this.io);
@@ -114,12 +114,12 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
         super.onMachinePlaced(player, stack);
         if (tank instanceof ConfigNotifiableFluidTank cTank) {
             if (io == IO.IN) cTank.newCapacity(this.maxTankCapacity);
-            else cTank.newCapacity(0L);
+            else cTank.newCapacity(0);
         }
     }
 
     @Override
-    public void setCapacity(int index, long capacity) {
+    public void setCapacity(int index, int capacity) {
         if (index % 2 == 0) {
             if (this.tank instanceof ConfigNotifiableFluidTank cfTank)
                 cfTank.setCapacity(index / 2, capacity);
@@ -127,7 +127,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
     }
 
     @Override
-    public long getCapacity(int index) {
+    public int getCapacity(int index) {
         if (index % 2 == 0) {
             if (this.tank instanceof ConfigNotifiableFluidTank cfTank)
                 return cfTank.getCapacity(index / 2);
@@ -147,7 +147,6 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
         }
 
         this.inventorySubs = this.getInventory().addChangedListener(this::updateInventorySubscription);
-        this.combinedInventory.recomputeEnabledState();
         this.tankSubs = this.tank.addChangedListener(this::updateInventorySubscription);
     }
 
@@ -230,7 +229,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
         } else if (this.tank instanceof ConfigNotifiableFluidTank cfTank) {
             if (!LDLib.isRemote()) {
                 if (ToolHelper.isTool(is, GTToolType.SCREWDRIVER)) {
-                    this.tank.setAllowSameFluids(!cfTank.getAllowSameFluids());
+                    cfTank.setAllowSameFluids(!cfTank.getAllowSameFluids());
                     Component enable = cfTank.getAllowSameFluids() ? Component.translatable("gtmadvancedhatch.gui.universe.no") : Component.translatable("gtmadvancedhatch.gui.universe.yes");
                     player.sendSystemMessage(Component.translatable("gtmadvancedhatch.machine.configurable_fluid_hatch.screwdriver.tooltip").append(enable));
                     return InteractionResult.SUCCESS;
@@ -252,7 +251,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
             config.putBoolean("allowSameFluid", cfTank.getAllowSameFluids());
             for (int i = 0; i < this.tank.getTanks(); i++) {
                 if (!cfTank.getIndexLocked(i).getFluid().isEmpty())
-                    fluids.put(String.valueOf(i), cfTank.getIndexLocked(i).getFluid().saveToTag(new CompoundTag()));
+                    fluids.put(String.valueOf(i), cfTank.getIndexLocked(i).getFluid().writeToNBT(new CompoundTag()));
                 fluid_capacity.putLong(String.valueOf(i), cfTank.getCapacity(i));
             }
         }
@@ -280,9 +279,9 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
                 CompoundTag fluid_capacity = config.getCompound("fluidCapacity");
                 for (int i = 0; i < this.tank.getTanks(); i++) {
                     if (fluids.contains(String.valueOf(i)))
-                        cfTank.setLocked(true, i, FluidStack.loadFromTag(fluids.getCompound(String.valueOf(i))));
-                    else cfTank.setLocked(false, i, FluidStack.empty());
-                    cfTank.newCapacity(i, fluid_capacity.getLong(String.valueOf(i)));
+                        cfTank.setLocked(true, i, FluidStack.loadFluidStackFromNBT(fluids.getCompound(String.valueOf(i))));
+                    else cfTank.setLocked(false, i, FluidStack.EMPTY);
+                    cfTank.newCapacity(i, fluid_capacity.getInt(String.valueOf(i)));
                 }
                 cfTank.setAllowSameFluids(config.getBoolean("allowSameFluid"));
             }
@@ -293,7 +292,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
                     if (stacks.contains(String.valueOf(i)))
                         cfStack.setLocked(true, i, ItemStack.of(stacks.getCompound(String.valueOf(i))));
                     else cfStack.setLocked(false, i, ItemStack.EMPTY);
-                    cfStack.newCapacity(i, stack_capacity.getLong(String.valueOf(i)));
+                    cfStack.newCapacity(i, stack_capacity.getInt(String.valueOf(i)));
                 }
             }
         }
@@ -357,7 +356,7 @@ public class ConfigurableDualHatchPartMachine extends ConfigurableItemBusPartMac
                     } else {
                         container.addWidget(new ConfigSlotWidget(cTransfer, cTransfer.storage, index / 2, 4 + x * 18, 4 + y * 36 + 18,
                                 true, this.io.support(IO.IN)).setBackground(GuiTextures.SLOT));
-                        container.addWidget((new PhantomItemCapacityWidget(cTransfer, cTransfer, (int) this.getCapacity(index), this.maxCapacity, index / 2,
+                        container.addWidget((new PhantomItemCapacityWidget(cTransfer, cTransfer, this.getCapacity(index), this.maxCapacity, index / 2,
                                 4 + x * 18, 4 + y * 36))
                                 .setDrawHoverTips(true)
                                 .setBackground(GuiTextures.SLOT_DARK));

@@ -24,7 +24,6 @@ import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachin
 
 import com.lowdragmc.lowdraglib.LDLib;
 import com.lowdragmc.lowdraglib.gui.widget.*;
-import com.lowdragmc.lowdraglib.side.fluid.FluidStack;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
@@ -54,6 +53,7 @@ import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 
 @ParametersAreNonnullByDefault
@@ -63,18 +63,18 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(ConfigurableFluidHatchPartMachine.class, FluidHatchPartMachine.MANAGED_FIELD_HOLDER);
     @Persisted
-    public long maxCapacity;
+    public int maxCapacity;
     private final int slots;
     protected @Nullable ISubscription tankSubs;
 
-    public ConfigurableFluidHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, long initialCapacity, int slots, Object... args) {
+    public ConfigurableFluidHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, int initialCapacity, int slots, Object... args) {
         super(holder, tier, io, initialCapacity, slots, args);
         this.slots = slots;
     }
 
-    public static long getTankCapacity(long initialCapacity, int tier) {
-        if (tier >= 3) return AHUtil.multiplyWithLongBounds(initialCapacity, (1L << (4 * Math.min(13, tier - 1))));
-        return initialCapacity * (1L << tier);
+    public static int getTankCapacity(int initialCapacity, int tier) {
+        if (tier >= 3) return AHUtil.multiplyWithIntegerBounds(initialCapacity, (1 << (4 * Math.min(13, tier - 1))));
+        return initialCapacity * (1 << tier);
     }
 
     // 因为流体槽的容量并不能持久化，因此这里需要手动载入
@@ -90,7 +90,7 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
     }
 
     @Override
-    protected NotifiableFluidTank createTank(long initialCapacity, int slots, Object... args) {
+    protected NotifiableFluidTank createTank(int initialCapacity, int slots, Object... args) {
         if (this.maxCapacity == 0L)
             this.maxCapacity = getTankCapacity(initialCapacity, tier);
         ConfigNotifiableFluidTank fluidTank = new ConfigNotifiableFluidTank(this, slots, this.maxCapacity, this.io);
@@ -102,7 +102,7 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
     public void onMachinePlaced(@Nullable LivingEntity player, ItemStack stack) {
         if (tank instanceof ConfigNotifiableFluidTank cTank) {
             if (io == IO.IN) cTank.newCapacity(this.maxCapacity);
-            else cTank.newCapacity(0L);
+            else cTank.newCapacity(0);
         }
     }
 
@@ -178,7 +178,7 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
         } else if (this.tank instanceof ConfigNotifiableFluidTank cfTank) {
             if (!LDLib.isRemote()) {
                 if (ToolHelper.isTool(is, GTToolType.SCREWDRIVER)) {
-                    this.tank.setAllowSameFluids(!cfTank.getAllowSameFluids());
+                    cfTank.setAllowSameFluids(!cfTank.getAllowSameFluids());
                     Component enable = cfTank.getAllowSameFluids() ? Component.translatable("gtmadvancedhatch.gui.universe.no") : Component.translatable("gtmadvancedhatch.gui.universe.yes");
                     player.sendSystemMessage(Component.translatable("gtmadvancedhatch.machine.configurable_fluid_hatch.screwdriver.tooltip").append(enable));
                     return InteractionResult.SUCCESS;
@@ -200,7 +200,7 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
             config.putBoolean("allowSameFluid", cfTank.getAllowSameFluids());
             for (int i = 0; i < this.tank.getTanks(); i++) {
                 if (!cfTank.getIndexLocked(i).getFluid().isEmpty())
-                    fluids.put(String.valueOf(i), cfTank.getIndexLocked(i).getFluid().saveToTag(new CompoundTag()));
+                    fluids.put(String.valueOf(i), cfTank.getIndexLocked(i).getFluid().writeToNBT(new CompoundTag()));
                 fluid_capacity.putLong(String.valueOf(i), cfTank.getCapacity(i));
             }
         }
@@ -215,9 +215,9 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
             CompoundTag fluid_capacity = config.getCompound("fluidCapacity");
             for (int i = 0; i < this.tank.getTanks(); i++) {
                 if (fluids.contains(String.valueOf(i)))
-                    cfTank.setLocked(true, i, FluidStack.loadFromTag(fluids.getCompound(String.valueOf(i))));
-                else cfTank.setLocked(false, i, FluidStack.empty());
-                cfTank.newCapacity(i, fluid_capacity.getLong(String.valueOf(i)));
+                    cfTank.setLocked(true, i, FluidStack.loadFluidStackFromNBT(fluids.getCompound(String.valueOf(i))));
+                else cfTank.setLocked(false, i, FluidStack.EMPTY);
+                cfTank.newCapacity(i, fluid_capacity.getInt(String.valueOf(i)));
             }
             cfTank.setAllowSameFluids(config.getBoolean("allowSameFluid"));
         }
@@ -233,14 +233,14 @@ public class ConfigurableFluidHatchPartMachine extends FluidHatchPartMachine imp
     }
 
     @Override
-    public void setCapacity(int index, long capacity) {
+    public void setCapacity(int index, int capacity) {
         if (this.tank instanceof ConfigNotifiableFluidTank cfTank) {
             cfTank.setCapacity(index, capacity);
         }
     }
 
     @Override
-    public long getCapacity(int index) {
+    public int getCapacity(int index) {
         if (this.tank instanceof ConfigNotifiableFluidTank cfTank) {
             return cfTank.getCapacity(index);
         }

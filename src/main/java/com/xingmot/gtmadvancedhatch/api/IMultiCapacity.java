@@ -5,7 +5,7 @@ package com.xingmot.gtmadvancedhatch.api;
  */
 public interface IMultiCapacity {
 
-    void setCapacity(int index, long capacity);
+    void setCapacity(int index, int capacity);
 
-    long getCapacity(int index);
+    int getCapacity(int index);
 }

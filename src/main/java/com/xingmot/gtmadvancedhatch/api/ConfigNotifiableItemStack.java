@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 
+import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 import com.lowdragmc.lowdraglib.misc.ItemStackTransfer;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
@@ -17,12 +18,13 @@ import java.util.function.Function;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * 画饼：tag匹配，耐久匹配，自动销毁
  */
-public class ConfigNotifiableItemStack extends NotifiableItemStackHandler implements IConfigTransfer<ItemStackTransfer, ItemStack, ItemStack> {
+public class ConfigNotifiableItemStack extends NotifiableItemStackHandler implements IConfigTransfer<ItemStackHandler, ItemStack, ItemStack> {
 
     public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(ConfigNotifiableItemStack.class, NotifiableItemStackHandler.MANAGED_FIELD_HOLDER);
     @Setter
@@ -46,7 +48,7 @@ public class ConfigNotifiableItemStack extends NotifiableItemStackHandler implem
         this.maxCapacity = maxCapacity;
         Arrays.fill(this.itemCapacity, maxCapacity);
         if (this.storage instanceof MutableLimitAndFilterStackTransfer mt)
-            this.filterRef = mt.getFilter();
+            this.filterRef = mt.getFilters();
         this.lockedItem = new MutableLimitAndFilterStackTransfer(size, itemCapacity, filterRef);
     }
 
@@ -72,30 +74,26 @@ public class ConfigNotifiableItemStack extends NotifiableItemStackHandler implem
     }
 
     @Override
-    public void setCapacity(int index, long capacity) {
+    public void setCapacity(int index, int capacity) {
         this.itemCapacity[index] = (int) capacity;
     }
 
     @Override
-    public long getCapacity(int index) {
+    public int getCapacity(int index) {
         return itemCapacity[index];
     }
 
     @Override
-    public void newCapacity(long capacity) {
-        int cap = (int) capacity;
-        if (capacity > Integer.MAX_VALUE) cap = Integer.MAX_VALUE;
-        cap = Math.max(0, Math.min(cap, this.maxCapacity));
-        Arrays.fill(this.itemCapacity, cap);
-        resetBasicInfo(cap);
+    public void newCapacity(int capacity) {
+        capacity = Math.max(0, Math.min(capacity, this.maxCapacity));
+        Arrays.fill(this.itemCapacity, capacity);
+        resetBasicInfo(capacity);
     }
 
     @Override
-    public void newCapacity(int index, long capacity) {
-        int cap = (int) capacity;
-        if (capacity > Integer.MAX_VALUE) cap = Integer.MAX_VALUE;
-        cap = Math.max(0, Math.min(cap, this.maxCapacity));
-        resetOneBasicInfo(index, cap);
+    public void newCapacity(int index, int capacity) {
+        capacity = Math.max(0, Math.min(capacity, this.maxCapacity));
+        resetOneBasicInfo(index, capacity);
     }
 
     /**
@@ -127,14 +125,13 @@ public class ConfigNotifiableItemStack extends NotifiableItemStackHandler implem
     }
 
     @Override
-    public boolean isTruncate(int index, long capacity) {
-        if (capacity > Integer.MAX_VALUE) capacity = Integer.MAX_VALUE;
+    public boolean isTruncate(int index, int capacity) {
         if (capacity < 0) capacity = 0;
         return !this.getStackInSlot(index).isEmpty() && capacity < this.getStackInSlot(index).getCount();
     }
 
     @Override
-    public ItemStackTransfer getLockedRef() {
+    public ItemStackHandler getLockedRef() {
         return lockedItem;
     }
 

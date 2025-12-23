@@ -115,6 +115,7 @@ public class AHFormattingUtil {
      */
     // TODO 文本长度过长时自动缩放字体
     @OnlyIn(Dist.CLIENT)
+    @SuppressWarnings("removal")
     public static MutableComponent getFormatWidthComponent(MutableComponent leftComponent, MutableComponent rightComponent, int width, String fill) {
         int baseLength = Minecraft.getInstance().font.width(Component.empty().append(leftComponent).append(rightComponent).getString());
         var spaceLength = width - baseLength;

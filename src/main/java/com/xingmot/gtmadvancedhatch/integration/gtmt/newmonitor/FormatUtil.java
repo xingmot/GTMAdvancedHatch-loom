@@ -62,6 +62,7 @@ public class FormatUtil {
         return newList;
     }
 
+    @SuppressWarnings("removal")
     public static MutableComponent formatWithConstantWidth(String labelKey, int width, Component body, Component... appends) {
         var a = new Component[appends.length + 1];
         a[0] = body;

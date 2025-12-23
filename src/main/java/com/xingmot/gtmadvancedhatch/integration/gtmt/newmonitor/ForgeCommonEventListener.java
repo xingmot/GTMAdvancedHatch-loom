@@ -9,8 +9,6 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import com.hepdd.gtmthings.data.WirelessEnergySavaedData;
-
 @Mod.EventBusSubscriber(modid = GTMAdvancedHatch.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeCommonEventListener {
 
@@ -28,7 +26,6 @@ public class ForgeCommonEventListener {
         if (event.getLevel() instanceof ServerLevel level) {
             ServerLevel serverLevel = level.getServer().getLevel(Level.OVERWORLD);
             if (serverLevel == null) return;
-            WirelessEnergySavaedData.INSTANCE = WirelessEnergySavaedData.getOrCreate(serverLevel);
             EnergyStat.server = event.getLevel().getServer();
         }
     }

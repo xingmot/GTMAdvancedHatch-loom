@@ -1,5 +1,7 @@
 package com.xingmot.gtmadvancedhatch.common.machines.adaptivehatch;
 
+import cn.qiuye.gtmoremachine.utils.TeamUtils;
+import com.xingmot.gtmadvancedhatch.api.IMutableBind;
 import com.xingmot.gtmadvancedhatch.api.adaptivenet.*;
 import com.xingmot.gtmadvancedhatch.common.data.AHItems;
 import com.xingmot.gtmadvancedhatch.common.data.MachinesConstants;
@@ -34,6 +36,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.TickTask;
@@ -55,8 +58,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static com.xingmot.gtmadvancedhatch.api.adaptivenet.AdaptiveConstants.NET_TYPE_ENERGY;
 import static com.xingmot.gtmadvancedhatch.common.data.MachinesConstants.getMaxCapacity;
 
-import com.hepdd.gtmthings.api.capability.IBindable;
-import com.hepdd.gtmthings.utils.TeamUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +69,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class AdaptiveNetEnergyTerminal extends MetaMachine implements IFancyUIMachine, IMachineLife, IInteractedMachine, IBindable, IFrequency, INetEndpoint {
+public class AdaptiveNetEnergyTerminal extends MetaMachine implements IFancyUIMachine, IMachineLife, IInteractedMachine, IMutableBind, IFrequency, INetEndpoint {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(AdaptiveNetEnergyTerminal.class, MetaMachine.MANAGED_FIELD_HOLDER);
     // 是否被覆盖（当存在已经注册的终端时被覆盖）
@@ -292,9 +293,9 @@ public class AdaptiveNetEnergyTerminal extends MetaMachine implements IFancyUIMa
         if (is.isEmpty()) {
             return InteractionResult.PASS;
         } else if (is.is(AHItems.TOOL_NET_DATA_STICK.asItem())) {
-            this.setUUID(TeamUtil.getTeamUUID(uuid));
+            this.setUUID(TeamUtils.getTeamUUID(uuid));
             if (LDLib.isClient())
-                player.displayClientMessage(Component.translatable("gtmthings.machine.wireless_energy_hatch.tooltip.bind", TeamUtil.GetName(player)), true);
+                player.displayClientMessage(Component.translatable("gtmoremachine.machine.wireless_energy_hatch.tooltip.bind", TeamUtils.getName(player)), true);
             return InteractionResult.SUCCESS;
         } else if (is.is(Items.STICK) && player.isCreative()) {
             // TODO 调试逻辑：木棍右键自动切换至已加载的终端的队伍uuid
@@ -448,17 +449,18 @@ public class AdaptiveNetEnergyTerminal extends MetaMachine implements IFancyUIMa
                     MutableComponent freq_component = Component.translatable("gtmadvancedhatch.machine.adaptive.frequency")
                             .append(String.valueOf(frequency));
                     if (isSlave)
-                        freq_component.kjs$hover(Component.translatable("gtmadvancedhatch.machine.adaptive.fail")
-                                .withStyle(ChatFormatting.BLUE)).withStyle(ChatFormatting.BLUE);
+                        freq_component.setStyle(freq_component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                        Component.translatable("gtmadvancedhatch.machine.adaptive.fail").withStyle(ChatFormatting.BLUE))))
+                                .withStyle(ChatFormatting.BLUE);
                     else
                         freq_component.withStyle(ChatFormatting.DARK_GREEN);
                     lastText.add(freq_component);
                 }
                 if (uuid.equals(MachinesConstants.UUID_ZERO))
-                    lastText.add(Component.translatable("gtmthings.machine.wireless_energy_monitor.tooltip.0", Component.translatable("gtmadvancedhatch.gui.bind_uuid.everyone"))
+                    lastText.add(Component.translatable("gtmoremachine.machine.wireless_energy_hatch.tooltip.bind", Component.translatable("gtmadvancedhatch.gui.bind_uuid.everyone"))
                             .withStyle(ChatFormatting.AQUA));
                 else
-                    lastText.add(Component.translatable("gtmthings.machine.wireless_energy_monitor.tooltip.0", AHUtil.getTeamName(holder.level(), uuid))
+                    lastText.add(Component.translatable("gtmoremachine.machine.wireless_energy_hatch.tooltip.bind", AHUtil.getTeamName(holder.level(), uuid))
                             .withStyle(ChatFormatting.AQUA));
                 lastText.add(AHFormattingUtil.getFormatWidthComponent(Component.literal("动力仓：")
                         .withStyle(ChatFormatting.GREEN), Component.literal(adaptiveData[0].amps + "A  " + GTValues.VNF[adaptiveData[0].setTier] + " (" + adaptiveData[0].voltage + ")"), 220, "·"));

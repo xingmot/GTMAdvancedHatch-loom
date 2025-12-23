@@ -1,18 +1,24 @@
 package com.xingmot.gtmadvancedhatch.util;
 
+import cn.qiuye.gtmoremachine.utils.TeamUtils;
+import com.lowdragmc.lowdraglib.LDLib;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.text.DecimalFormat;
+import java.util.Optional;
 import java.util.UUID;
 
-import com.hepdd.gtmthings.utils.TeamUtil;
 import com.mojang.datafixers.util.Pair;
+import dev.ftb.mods.ftbteams.api.FTBTeamsAPI;
+import dev.ftb.mods.ftbteams.api.Team;
 
 public class AHUtil {
 
@@ -20,9 +26,21 @@ public class AHUtil {
 
     public static Component getTeamName(Level level, UUID playerUUID) {
         Component name = Component.translatable("gtmadvancedhatch.machine.unknow_player");
-        if (TeamUtil.hasOwner(level, playerUUID))
-            name = TeamUtil.GetName(level, playerUUID);
+        if (TeamUtils.hasOwner(level, playerUUID))
+            name = AHUtil.GetName(level, playerUUID);
         return name;
+    }
+
+    public static Component GetName(Level level, UUID playerUUID) {
+        if (LDLib.isModLoaded("ftbteams") && FTBTeamsAPI.api().isManagerLoaded()) {
+            Optional<Team> team = FTBTeamsAPI.api().getManager().getTeamForPlayerID(playerUUID);
+            if (team.isPresent()) return team.get().getName();
+        }
+        Player player = level.getPlayerByUUID(playerUUID);
+        if (player != null)
+            return player.getName();
+        else
+            return Component.literal(playerUUID.toString());
     }
 
     // region 》数学工具方法

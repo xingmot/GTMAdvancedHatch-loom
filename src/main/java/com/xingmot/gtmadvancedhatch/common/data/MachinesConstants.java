@@ -1,14 +1,12 @@
 package com.xingmot.gtmadvancedhatch.common.data;
 
+import cn.qiuye.gtmoremachine.common.data.GTMMItems;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.item.ComponentItem;
 
 import java.util.List;
 import java.util.UUID;
 
-import static com.gregtechceu.gtceu.common.data.GTItems.*;
-
-import com.hepdd.gtmthings.data.CustomItems;
 import com.tterrag.registrate.util.entry.ItemEntry;
 
 public final class MachinesConstants {
@@ -60,33 +58,33 @@ public final class MachinesConstants {
 
     // region GTMThings
     public static List<ItemEntry<ComponentItem>> WIRELESS_ENERGY_RECEIVE_COVER = List.of(
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_LV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_MV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_HV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_EV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_IV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_ZPM,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UHV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UEV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UIV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UXV,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_OPV);
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_LV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_MV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_HV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_EV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_IV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_ZPM,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UHV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UEV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UIV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UXV,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_OPV);
 
     public static List<ItemEntry<ComponentItem>> WIRELESS_ENERGY_RECEIVE_COVER_4A = List.of(
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_LV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_MV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_HV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_EV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_IV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_ZPM_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UHV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UEV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UIV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_UXV_4A,
-            CustomItems.WIRELESS_ENERGY_RECEIVE_COVER_OPV_4A);
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_LV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_MV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_HV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_EV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_IV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_LUV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_ZPM_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UHV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UEV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UIV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_UXV_4A,
+            GTMMItems.WIRELESS_ENERGY_RECEIVE_COVER_OPV_4A);
     // endregion
 }

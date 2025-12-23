@@ -1,25 +1,18 @@
 {
-  "package": "com.xingmot.gtmadvancedhatch.mixin",
   "required": true,
-  "target": "@env(DEFAULT)",
   "minVersion": "0.8",
-  "compatibilityLevel": "JAVA_17",
+  "package": "com.xingmot.gtmadvancedhatch.mixin",
   "refmap": "GTMAdvancedHatch-1.20.1-refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "target": "@env(DEFAULT)",
   "plugin": "com.xingmot.gtmadvancedhatch.mixin.MixinConfigPlugin",
   "mixins": [
     "buildinggadgets.BuildingUtilsMixin",
     "buildinggadgets.RenderBlockBEMixin",
     "buildinggadgets.ServerBuildListMixin",
     "buildinggadgets.ServerTickHandlerMixin",
-    "gtlcore.PerformanceMonitorMachineMixin",
     "gtm.GTUtilMixin",
-    "gtm.OverlayedFluidHandlerMixin",
-    "gtm.OverlayedFluidHandlerMixin$OverlayedTankMixin",
     "gtm.OverlayedItemSlotHandlerMixin",
-    "gtm.RecipeModifierListMixin",
-    "gtmt.WirelessEnergyManagerMixin",
-    "gtmt.WirelessEnergyMonitorMixin",
-    "gtmt.WirelessEnergySavedDataMixin",
     "ldlib.ModularUIContainerMixin"
   ],
   "client": [
