@@ -2,6 +2,7 @@ package com.xingmot.gtmadvancedhatch.common.machines;
 
 import com.xingmot.gtmadvancedhatch.api.IBatchable;
 import com.xingmot.gtmadvancedhatch.api.NoConsumeNotifiabbleEnergyContainer;
+import com.xingmot.gtmadvancedhatch.config.AHConfig;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
@@ -35,7 +36,7 @@ public class NetEnergyHatchPartMachine extends WirelessEnergyHatchPartMachine im
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(NetEnergyHatchPartMachine.class, WirelessEnergyHatchPartMachine.MANAGED_FIELD_HOLDER);
     private TickableSubscription updEnergySubs;
     @Persisted
-    public boolean isBatchEnable;
+    public boolean isBatchEnable = AHConfig.INSTANCE.isBatchEnable;
 
     public NetEnergyHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, int amperage, Object... args) {
         super(holder, tier, io, amperage, args);

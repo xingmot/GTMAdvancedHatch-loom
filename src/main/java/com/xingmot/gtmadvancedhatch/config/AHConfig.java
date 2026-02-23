@@ -52,4 +52,8 @@ public class AHConfig {
     @Configurable.Range(min = 1, max = 5)
     @Configurable.Comment({ "可配置流体仓、可配置总成的流体自动输入输出间隔（越小越快），默认：5" })
     public int configurableFluidIOTick = 5;
+
+    @Configurable
+    @Configurable.Comment({ "是否默认开启批处理" })
+    public boolean isBatchEnable = true;
 }

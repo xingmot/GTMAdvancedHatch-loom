@@ -2,6 +2,7 @@ package com.xingmot.gtmadvancedhatch.common.machines;
 
 import com.xingmot.gtmadvancedhatch.api.IBatchable;
 import com.xingmot.gtmadvancedhatch.api.NoConsumeNotifiabbleLaserContainer;
+import com.xingmot.gtmadvancedhatch.config.AHConfig;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
@@ -38,7 +39,7 @@ public class NetLaserHatchPartMachine extends WirelessLaserHatchPartMachine impl
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(NetLaserHatchPartMachine.class, WirelessLaserHatchPartMachine.MANAGED_FIELD_HOLDER);
     private TickableSubscription updEnergySubs;
     @Persisted
-    public boolean isBatchEnable;
+    public boolean isBatchEnable = AHConfig.INSTANCE.isBatchEnable;
 
     public NetLaserHatchPartMachine(IMachineBlockEntity holder, int tier, IO io, int amperage, Object... args) {
         super(holder, tier, io, amperage, args);
@@ -94,7 +95,8 @@ public class NetLaserHatchPartMachine extends WirelessLaserHatchPartMachine impl
 
     //////////////////////////////////////
     // ********** 原封不动 ***********//
-    //////////////////////////////////////
+
+    /// ///////////////////////////////////
     public void onLoad() {
         super.onLoad();
         this.updateEnergySubscription();

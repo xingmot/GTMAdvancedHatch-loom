@@ -33,16 +33,16 @@ public class ExGTLMachines {
     // 电网激光仓
     public static final MachineDefinition[] NET_LASER_INPUT_HATCH_262144A = registerNetLaserHatch(IO.IN, 262144, PartAbility.INPUT_LASER, NET_HIGH_TIERS);
     public static final MachineDefinition[] NET_LASER_INPUT_HATCH_1048576A = registerNetLaserHatch(IO.IN, 1048576, PartAbility.INPUT_LASER, NET_HIGH_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_INPUT_HATCH_4194304A = registerNetLaserHatch(IO.IN, 4194304, PartAbility.INPUT_LASER, NET_HIGH_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_INPUT_HATCH_16777216A = registerNetLaserHatch(IO.IN, 16777216, PartAbility.INPUT_LASER, HIGHEST_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_INPUT_HATCH_67108864A = registerNetLaserHatch(IO.IN, 67108864, PartAbility.INPUT_LASER, HIGHEST_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_INPUT_HATCH_2147483647A = registerNetLaserHatch(IO.IN, 2147483647, PartAbility.INPUT_LASER, HIGHEST_TIERS);
+    public static final MachineDefinition[] NET_LASER_INPUT_HATCH_4194304A = registerNetLaserHatch(IO.IN, 4194304, PartAbility.INPUT_LASER, NET_HIGH_TIERS);
+    public static final MachineDefinition[] NET_LASER_INPUT_HATCH_16777216A = registerNetLaserHatch(IO.IN, 16777216, PartAbility.INPUT_LASER, HIGHEST_TIERS);
+    public static final MachineDefinition[] NET_LASER_INPUT_HATCH_67108864A = registerNetLaserHatch(IO.IN, 67108864, PartAbility.INPUT_LASER, HIGHEST_TIERS);
+    public static final MachineDefinition[] NET_LASER_INPUT_HATCH_2147483647A = registerNetLaserHatch(IO.IN, 2147483647, PartAbility.INPUT_LASER, HIGHEST_TIERS);
     public static final MachineDefinition[] NET_LASER_OUTPUT_HATCH_262144A = registerNetLaserHatch(IO.OUT, 262144, PartAbility.OUTPUT_LASER, NET_HIGH_TIERS);
     public static final MachineDefinition[] NET_LASER_OUTPUT_HATCH_1048576A = registerNetLaserHatch(IO.OUT, 1048576, PartAbility.OUTPUT_LASER, NET_HIGH_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_OUTPUT_HATCH_4194304A = registerNetLaserHatch(IO.OUT, 4194304, PartAbility.OUTPUT_LASER, NET_HIGH_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_OUTPUT_HATCH_16777216A = registerNetLaserHatch(IO.OUT, 16777216, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_OUTPUT_HATCH_67108864A = registerNetLaserHatch(IO.OUT, 67108864, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
-    public static final MachineDefinition[] NET_ENERGY_OUTPUT_HATCH_2147483647A = registerNetLaserHatch(IO.OUT, 2147483647, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
+    public static final MachineDefinition[] NET_LASER_OUTPUT_HATCH_4194304A = registerNetLaserHatch(IO.OUT, 4194304, PartAbility.OUTPUT_LASER, NET_HIGH_TIERS);
+    public static final MachineDefinition[] NET_LASER_OUTPUT_HATCH_16777216A = registerNetLaserHatch(IO.OUT, 16777216, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
+    public static final MachineDefinition[] NET_LASER_OUTPUT_HATCH_67108864A = registerNetLaserHatch(IO.OUT, 67108864, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
+    public static final MachineDefinition[] NET_LASER_OUTPUT_HATCH_2147483647A = registerNetLaserHatch(IO.OUT, 2147483647, PartAbility.OUTPUT_LASER, HIGHEST_TIERS);
     // 普通无线仓
     public static MachineDefinition[] WIRELESS_ENERGY_INPUT_HATCH_16777216A;
     public static MachineDefinition[] WIRELESS_ENERGY_INPUT_HATCH_67108864A;

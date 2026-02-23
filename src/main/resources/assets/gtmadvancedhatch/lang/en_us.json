@@ -86,6 +86,7 @@
   "config.gtmadvancedhatch.option.buildingGadgetMaxPower": "复制工具电量上限",
   "config.gtmadvancedhatch.option.buildingGadgetBuildAE2": "复制工具可复制更多AE部件（无消耗）",
   "config.gtmadvancedhatch.option.configurableFluidIOTick": "可配置仓室流体传输频率",
+  "config.gtmadvancedhatch.option.isBatchEnable": "是否默认开启批处理",
   "book.gtmadvancedhatch.name": "高级仓室手册",
   "book.gtmadvancedhatch.landing_text": "这本书记录了本模组全部物品的功能。",
   "item.gtmadvancedhatch.net_data_stick": "网络配置闪存",

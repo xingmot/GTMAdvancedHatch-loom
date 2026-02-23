@@ -12,6 +12,7 @@
     "buildinggadgets.ServerBuildListMixin",
     "buildinggadgets.ServerTickHandlerMixin",
     "gtlcore.PerformanceMonitorMachineMixin",
+    "gtm.ElectricContainerBlockProviderMixin",
     "gtm.GTUtilMixin",
     "gtm.OverlayedFluidHandlerMixin",
     "gtm.OverlayedFluidHandlerMixin$OverlayedTankMixin",
