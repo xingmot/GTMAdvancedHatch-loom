@@ -52,5 +52,48 @@ tasks.register('generateAccessWidenerBase') {
     }
 }
 
+// 添加清除build/libs目录下jar包的任务
+tasks.register('cleanLibs') {
+    group = 'custom helpers'
+    description = '清除build/libs目录下的所有jar包文件'
+    
+    doLast {
+        def libsDir = file('build/libs')
+        if (libsDir.exists() && libsDir.isDirectory()) {
+            libsDir.listFiles({ file -> file.name.endsWith('.jar') } as FileFilter).each { jarFile ->
+                println "删除jar文件: ${jarFile.name}"
+                jarFile.delete()
+            }
+            println "已完成清理build/libs目录下的jar包"
+        } else {
+            println "build/libs目录不存在或不是目录"
+        }
+    }
+}
+
+// 添加更通用的清理任务，可以指定文件扩展名
+tasks.register('cleanBuildFiles') {
+    group = 'custom helpers'
+    description = '清除build目录下指定类型的文件'
+    
+    // 可以通过命令行参数指定要清理的文件类型，默认为jar
+    doLast {
+        def fileType = project.hasProperty('fileType') ? project.property('fileType') : 'jar'
+        def buildDir = file('build')
+        
+        if (buildDir.exists() && buildDir.isDirectory()) {
+            buildDir.traverse(type: FileType.FILES) { file ->
+                if (file.name.endsWith(".${fileType}")) {
+                    println "删除${fileType}文件: ${file.absolutePath}"
+                    file.delete()
+                }
+            }
+            println "已完成清理build目录下的.${fileType}文件"
+        } else {
+            println "build目录不存在或不是目录"
+        }
+    }
+}
+
 ext.fnGenerateAccessWidenerBase = this.&fnGenerateAccessWidenerBase
 ext.fnGenerateMixinJson = this.&fnGenerateMixinJson
