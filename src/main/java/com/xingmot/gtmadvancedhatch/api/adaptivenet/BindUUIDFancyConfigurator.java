@@ -48,9 +48,9 @@ public class BindUUIDFancyConfigurator implements IFancyConfigurator {
     @Override
     public Widget createConfigurator() {
         var group = new WidgetGroup(0, 0, 60, 50);
-        group.addWidget(new LabelWidget(9, 8, "gtmadvancedhatch.gui.binduuid.title2"));
+        group.addWidget(new LabelWidget(9, 8, Component.translatable("gtmadvancedhatch.gui.bind_uuid.title2").getString()));
         group.addWidget(new ButtonWidget(group.getSize().width / 2 - 9, 20, 18, 18, GuiTextures.MAINTENANCE_BUTTON,
-                data -> bindUUID(group.getGui().entityPlayer)).setHoverTooltips("gtmadvancedhatch.gui.binduuid.button.tooltip"));
+                data -> bindUUID(group.getGui().entityPlayer)).setHoverTooltips(Component.translatable("gtmadvancedhatch.gui.bind_uuid.button.tooltip").getString()));
         return group;
     }
 
