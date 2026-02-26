@@ -267,6 +267,12 @@ public class AdaptiveNetLaserHatchPartMachine extends NetLaserHatchPartMachine i
         }
     }
 
+    @Override
+    public void onUnload() {
+        super.onUnload();
+        ActiveAdaptiveNetStatistics.decrement(AdaptiveConstants.NET_TYPE_ENERGY, this.frequency, this.net_uuid, special, this.getBlockPos());
+    }
+
     // =============================== IBindable ==================================
     @Override
     public UUID getUUID() {
