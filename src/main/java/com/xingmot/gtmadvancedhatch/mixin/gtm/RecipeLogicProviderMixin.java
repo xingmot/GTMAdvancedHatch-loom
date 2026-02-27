@@ -1,13 +1,10 @@
 package com.xingmot.gtmadvancedhatch.mixin.gtm;
 
-import com.xingmot.gtmadvancedhatch.api.util.VoltageLevelLookup;
-
 import org.gtlcore.gtlcore.integration.gtmt.NewGTValues;
 import org.gtlcore.gtlcore.utils.NumberUtils;
 
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.integration.jade.provider.RecipeLogicProvider;
-import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -50,16 +47,17 @@ public class RecipeLogicProviderMixin {
                     var isInput = recipeInfo.getBoolean("isInput");
                     long longEu = Math.abs(eut);
                     BigDecimal absEUt = new BigDecimal(Math.abs(eut));
-
                     var tier = longEu == Long.MAX_VALUE ? GTValues.MAX_TRUE : NumberUtils.getFakeVoltageTier(longEu);
+                    Double ampere = absEUt.divide(BigDecimal.valueOf(GTValues.VEX[tier]), 2, RoundingMode.DOWN)
+                            .doubleValue();
                     Component text = Component.literal(absEUt.compareTo(base) < 0 ? absEUt.toString() : format.format(absEUt))
                             .withStyle(RED)
                             .append(Component.literal(" EU/t").withStyle(RESET)
                                     .append(Component.literal(" (").withStyle(GREEN)
-                                            .append(Component.literal(FormattingUtil.DECIMAL_FORMAT_2F.format(absEUt.divide(BigDecimal.valueOf(GTValues.VEX[tier]), 3, RoundingMode.DOWN)
-                                                    .doubleValue()) + "A ")
+                                            .append(Component.translatable("gtceu.top.electricity",
+                                                    ampere < 1000.0d ? ampere.toString() : format.format(ampere),
+                                                    GTValues.VNF[tier])
                                                     .withStyle(style -> style.withColor(GTL_CORE$VC[Math.min(tier, 14)])))
-                                            .append(Component.literal(VoltageLevelLookup.findVoltageLevel(absEUt)))
                                             .append(Component.literal(")").withStyle(GREEN))));
 
                     if (isInput) {
@@ -72,15 +70,15 @@ public class RecipeLogicProviderMixin {
                     BigInteger abs = wirelessEut.abs();
                     long longEu = NumberUtils.getLongValue(abs);
                     var tier = longEu == Long.MAX_VALUE ? GTValues.MAX_TRUE : NumberUtils.getFakeVoltageTier(longEu);
+                    Double ampere = new BigDecimal(abs).divide(BigDecimal.valueOf(GTValues.VEX[tier]), 2, RoundingMode.DOWN)
+                            .doubleValue();
                     Component text = Component.literal(abs.compareTo(base.toBigInteger()) < 0 ? abs.toString() : format.format(abs))
                             .withStyle(RED)
                             .append(Component.literal(" EU/t").withStyle(RESET)
                                     .append(Component.literal(" (").withStyle(GREEN)
-                                            .append(Component
-                                                    .translatable("gtceu.top.electricity",
-                                                            FormattingUtil.DECIMAL_FORMAT_2F.format(new BigDecimal(abs).divide(BigDecimal.valueOf(GTValues.VEX[tier]), 3, RoundingMode.DOWN)
-                                                                    .doubleValue()),
-                                                            NewGTValues.VNF[tier])
+                                            .append(Component.translatable("gtceu.top.electricity",
+                                                    ampere < 1000.0d ? ampere.toString() : format.format(ampere),
+                                                    NewGTValues.VNF[tier])
                                                     .withStyle(style -> style.withColor(GTL_CORE$VC[Math.min(tier, 14)])))
                                             .append(Component.literal(")").withStyle(GREEN))));
 
@@ -93,11 +91,15 @@ public class RecipeLogicProviderMixin {
             }
             String reason = capData.getString("work_reason");
             if (reason.isEmpty()) return;
-            tooltip.add(Component.translatable("gtceu.recipe.fail.reason", reason).withStyle(RED));
+            Component reasonComponent = Component.Serializer.fromJson(reason);
+            if (reasonComponent == null) return;
+            tooltip.add(Component.translatable("gtceu.recipe.fail.reason", reasonComponent).withStyle(RED));
         } else {
             String reason = capData.getString("reason");
             if (reason.isEmpty()) return;
-            tooltip.add(Component.translatable("gtceu.recipe.fail.reason", reason).withStyle(RED));
+            Component reasonComponent = Component.Serializer.fromJson(reason);
+            if (reasonComponent == null) return;
+            tooltip.add(Component.translatable("gtceu.recipe.fail.reason", reasonComponent).withStyle(RED));
         }
     }
 }
